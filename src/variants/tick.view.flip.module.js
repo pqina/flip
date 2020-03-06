@@ -1,0 +1,1 @@
+export default typeof window !== 'undefined' ? (__LIB__()) : null;

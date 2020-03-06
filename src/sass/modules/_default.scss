@@ -1,0 +1,27 @@
+.tick-flip {
+
+	// distance from other possible flippers
+	margin-left:.0625em;
+	margin-right:.0625em;
+
+	// prevents width changes when animating between empty space and characters
+	min-width:1.125em;
+
+	// sets default border radius
+	border-radius:.125em;
+
+	// default spacing
+	letter-spacing: .25em;
+	text-indent: .25em;
+}
+
+// default colors
+.tick-flip-panel {
+	color:#edebeb;
+	background-color:#333232;
+}
+
+// default shadow
+.tick-flip-shadow {
+	box-shadow:0 .125em .3125em rgba(0, 0, 0, .25), 0 .02125em .06125em rgba(0, 0, 0, .25);
+}

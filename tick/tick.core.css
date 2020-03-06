@@ -1,0 +1,247 @@
+/*
+ * Tick v1.7.5 - Counters Made Easy
+ * Copyright (c) 2019 PQINA - http://tickcounterplugin.com
+ */
+.tick {
+  box-sizing: border-box;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: default;
+  position: relative;
+  z-index: 1;
+  line-height: 1.4; }
+  .tick * {
+    box-sizing: inherit; }
+  .tick [data-view] {
+    max-width: 100%; }
+  .tick span[data-view] {
+    display: inline-block; }
+  .tick [data-layout~='pad'] {
+    margin: -.25em; }
+    .tick [data-layout~='pad'] > * {
+      margin: .25em; }
+  .tick [data-layout~='horizontal'] {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+    .tick [data-layout~='horizontal'][data-layout~='baseline'] {
+      -webkit-box-align: baseline;
+      -webkit-align-items: baseline;
+          -ms-flex-align: baseline;
+              align-items: baseline; }
+    .tick [data-layout~='horizontal'][data-layout~='center'] {
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center; }
+    .tick [data-layout~='horizontal'][data-layout~='right'] {
+      -webkit-box-pack: end;
+      -webkit-justify-content: flex-end;
+          -ms-flex-pack: end;
+              justify-content: flex-end; }
+    .tick [data-layout~='horizontal'][data-layout~='left'] {
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+          -ms-flex-pack: start;
+              justify-content: flex-start; }
+    .tick [data-layout~='horizontal'][data-layout~='stretch'], .tick [data-layout~='horizontal'][data-layout~='fill'] {
+      -webkit-align-content: stretch;
+          -ms-flex-line-pack: stretch;
+              align-content: stretch;
+      -webkit-flex-wrap: nowrap;
+          -ms-flex-wrap: nowrap;
+              flex-wrap: nowrap; }
+      .tick [data-layout~='horizontal'][data-layout~='stretch'] > *, .tick [data-layout~='horizontal'][data-layout~='fill'] > * {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 0;
+            -ms-flex: 1 0 0px;
+                flex: 1 0 0; }
+      .tick [data-layout~='horizontal'][data-layout~='stretch'] > *, .tick [data-layout~='horizontal'][data-layout~='fill'] > * {
+        width: 100%; }
+    .tick [data-layout~='horizontal'][data-layout~='multi-line'] {
+      -webkit-flex-wrap: wrap;
+          -ms-flex-wrap: wrap;
+              flex-wrap: wrap; }
+    .tick [data-layout~='horizontal'][data-layout~='fit'] {
+      display: -webkit-inline-box;
+      display: -webkit-inline-flex;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      -webkit-flex-wrap: nowrap;
+          -ms-flex-wrap: nowrap;
+              flex-wrap: nowrap;
+      -webkit-align-content: center;
+          -ms-flex-line-pack: center;
+              align-content: center;
+      white-space: nowrap;
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+          -ms-flex-pack: start;
+              justify-content: flex-start; }
+  .tick [data-layout~='vertical'] {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center; }
+    .tick [data-layout~='vertical'][data-layout~='top'] {
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+          -ms-flex-pack: start;
+              justify-content: flex-start; }
+    .tick [data-layout~='vertical'][data-layout~='bottom'] {
+      -webkit-box-pack: end;
+      -webkit-justify-content: flex-end;
+          -ms-flex-pack: end;
+              justify-content: flex-end;
+      min-height: 100%; }
+    .tick [data-layout~='vertical'][data-layout~='middle'] {
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      min-height: 100%; }
+    .tick [data-layout~='vertical'][data-layout~='left'] {
+      -webkit-box-align: start;
+      -webkit-align-items: flex-start;
+          -ms-flex-align: start;
+              align-items: flex-start; }
+    .tick [data-layout~='vertical'][data-layout~='right'] {
+      -webkit-box-align: end;
+      -webkit-align-items: flex-end;
+          -ms-flex-align: end;
+              align-items: flex-end; }
+    .tick [data-layout~='vertical'][data-layout~='center'] {
+      text-align: center; }
+    .tick [data-layout~='vertical'][data-layout~='stretch'], .tick [data-layout~='vertical'][data-layout~='fill'] {
+      -webkit-box-align: stretch;
+      -webkit-align-items: stretch;
+          -ms-flex-align: stretch;
+              align-items: stretch;
+      min-height: 100%; }
+      .tick [data-layout~='vertical'][data-layout~='stretch'] > *, .tick [data-layout~='vertical'][data-layout~='fill'] > * {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 0;
+            -ms-flex: 1 0 0px;
+                flex: 1 0 0; }
+    .tick [data-layout~='vertical'] > * + * {
+      margin-top: .5em; }
+  .tick [data-layout~='overlay'] {
+    position: relative; }
+    .tick [data-layout~='overlay'] > * {
+      margin: 0; }
+    .tick [data-layout~='overlay'][data-layout~='center'] {
+      text-align: center; }
+    .tick [data-layout~='overlay'][data-layout~='left'] {
+      text-align: left; }
+    .tick [data-layout~='overlay'][data-layout~='right'] {
+      text-align: right; }
+    .tick [data-layout~='overlay'] > [data-overlay='stretch'],
+    .tick [data-layout~='overlay'] > [data-overlay='fill'] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0; }
+    .tick [data-layout~='overlay'] > [data-overlay='center'] {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0; }
+
+/* 
+
+// Default Visual Style
+
+
+.tick-text[data-style*='transition'] {
+	// prevents width changes when animating between empty space and characters
+	min-width:1ex;
+	text-align:center;
+}
+
+// flipper
+.tick-flip {
+
+	// distance from other possible flippers
+	margin-left:.0625em;
+	margin-right:.0625em;
+
+	// prevents width changes when animating between empty space and characters
+	min-width:1.125em;
+
+	// sets default border radius
+	border-radius:.125em;
+
+	// default spacing
+	letter-spacing: .25em;
+	text-indent: .25em;
+}
+
+.tick-flip-front,
+.tick-flip-back {
+	color:#eee;
+	background-color:#333;
+	box-shadow:0 .125em .3125em rgba(0,0,0,.25), 0 .02125em .06125em rgba(0,0,0,.25);
+}
+
+// matrix
+.tick-matrix-char {
+	margin:0 .05em;
+}
+
+.tick-matrix-pixel {
+	width:5px;
+	height:5px;
+	margin:1px;
+	background-color:currentColor;
+	border-radius:2px;
+}
+
+// meter (horizontal / vertical)
+.tick-meter-rail {
+	background-color:#eee;
+}
+
+.tick-meter-fill {
+	background-color:currentColor;
+}
+
+// meter (ring)
+.tick-meter canvas {
+
+}
+ */

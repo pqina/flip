@@ -1,0 +1,242 @@
+/**
+ * Layout
+ */
+.tick-flip {
+    position: relative;
+    text-align: center;
+
+    * {
+        border-radius: inherit;
+        white-space: pre;
+    }
+}
+
+.tick-flip * {
+    letter-spacing: inherit;
+    text-indent: inherit;
+}
+
+.tick-flip-front {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.tick-flip-back {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.tick-flip-spacer {
+    display: block;
+    visibility: hidden;
+}
+
+.tick-flip-shadow {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    color: transparent !important;
+    background: transparent !important;
+}
+
+.tick-flip-shadow-top {
+    bottom: calc(50% - 1px);
+}
+
+.tick-flip-shadow-bottom {
+    top: calc(50% + 1px);
+}
+
+// fuzzy shadow below flip
+.tick-flip-card-shadow {
+    position: absolute;
+    left: 0.15em;
+    right: 0.15em;
+    bottom: 0.125em;
+    height: 0.5em;
+    background-color: transparent;
+    border-radius: 0;
+    opacity: 0;
+    transform-origin: 0 100%;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.5),
+        0 0.125em 0.5em rgba(0, 0, 0, 0.75);
+    z-index: 0;
+}
+
+/**
+ * Card
+ */
+.tick-flip-card {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    perspective: 4em;
+}
+
+.tick-flip-panel-front,
+.tick-flip-panel-back {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 51%; // 51% to fix transparent line problem between top and bottom card
+    backface-visibility: hidden;
+    // outline: 1px solid transparent; fixes anti-aliasing on older Firefox versions
+
+    // fixes rendering problems on Edge
+    transform-style: preserve-3d;
+}
+
+.tick-flip-panel-front-text,
+.tick-flip-panel-back-text {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    right: -1px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.tick-flip-panel-text-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+
+.tick-flip-panel-back-text .tick-flip-panel-text-wrapper {
+    height: 200%;
+    top: -100%;
+}
+
+.tick-flip-panel-front {
+    transform-origin: center bottom;
+    top: 0;
+    z-index: 2;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.tick-flip-panel-back {
+    transform-origin: center top;
+    top: 50%;
+    z-index: 1;
+    box-shadow: inset 0 -1px rgba(0, 0, 0, 0.1);
+
+    &::after {
+        z-index: 1;
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.3) 1px,
+            rgba(0, 0, 0, 0.15) 1px,
+            rgba(0, 0, 0, 0) 30%
+        );
+    }
+}
+
+.tick-flip-panel-back-shadow {
+    z-index: 2;
+}
+
+.tick-flip-panel-back-highlight {
+    z-index: 3;
+}
+
+.tick-flip-panel-back-shadow,
+.tick-flip-panel-back-highlight {
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+// shadow effects on panel (while moving)
+.tick-flip-panel-front-shadow,
+.tick-flip-panel-back-shadow,
+.tick-flip-panel-back-highlight {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+}
+
+.tick-flip-panel-front-shadow {
+    background-image: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.3)
+    );
+}
+
+.tick-flip-panel-back-shadow {
+    background-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.5)
+    );
+}
+
+.tick-flip-panel-back-highlight {
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.3)
+    );
+}
+
+// hide outer shadows
+.tick [data-style*='shadow:inner'] {
+    &,
+    .tick-flip-card-shadow {
+        box-shadow: none;
+    }
+}
+
+// hide all shadows
+.tick [data-style*='shadow:none'] {
+    .tick-flip-panel-front,
+    .tick-flip-panel-back,
+    .tick-flip-shadow,
+    .tick-flip-card-shadow {
+        box-shadow: none;
+    }
+
+    .tick-flip-back::after,
+    .tick-flip-panel-front-shadow,
+    .tick-flip-panel-back-shadow,
+    .tick-flip-panel-back-text::after {
+        background-image: none;
+    }
+}
+
+// corners 'none', 'panels', default is 'corners'
+.tick [data-style*='rounded:none'] {
+    & {
+        border-radius: 0;
+    }
+}
+
+.tick [data-style*='rounded:panels'] {
+    .tick-flip-shadow-bottom,
+    .tick-flip-front {
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+    }
+
+    .tick-flip-shadow-top,
+    .tick-flip-panel-back::after,
+    .tick-flip-back {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+    }
+}

@@ -1,0 +1,1 @@
+module.exports = (__LIB__());
