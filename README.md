@@ -6,6 +6,8 @@ Flip is an advanced and beautiful flip counter plugin. Easy to use and highly fl
 
 [Learn more on the product site](https://pqina.nl/flip/)
 
+Made with ❤ By [Rik Schennink](https://twitter.com/rikschennink/)
+
 
 ## Quick Start
 
@@ -38,3 +40,7 @@ You can now copy past the [presets](https://pqina.nl/flip/#presets) to your webs
 ## Docs
 
 Information on how to customize Tick and use the Tick API can be found on the [product website](http://tickcounterplugin.com/docs).
+
+## License
+
+MIT License, Enjoy!
