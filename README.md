@@ -1,3 +1,8 @@
+# Flip Countdown
+
+**The online version of the classic flip clock**
+
+Flip is an advanced and beautiful flip counter plugin. Easy to use and highly flexible, you can set up a custom counter on your website in minutes. Display visitor counts, countdown to a special date or celebrate progress. Whatever you’re planning, the options are endless.
 
 ![Flip Counter](./flip.png)
 
