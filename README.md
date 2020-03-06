@@ -13,8 +13,6 @@ If you just want to get on your way, copy the `example` directory and use it a s
 
 This example will automatically initialise Flip counters on the website and can be used with the [presets on the demo site](https://pqina.nl/flip/#presets).
 
-![Flip Counter](./flip.png)
-
 
 ## Setup
 
