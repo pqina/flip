@@ -2,9 +2,11 @@
 
 **The online version of the classic flip clock**
 
+![](https://pqina.nl/flip/promotion/countdown.gif)
+
 Flip is an advanced and beautiful flip counter plugin. Easy to use and highly flexible, you can set up a custom counter on your website in minutes. Display visitor counts, countdown to a special date or celebrate progress. Whatever you’re planning, the options are endless.
 
-![Flip Counter](./flip.png)
+[Learn more on the product site](https://pqina.nl/flip/)
 
 
 ## Quick Start
@@ -12,6 +14,8 @@ Flip is an advanced and beautiful flip counter plugin. Easy to use and highly fl
 If you just want to get on your way, copy the `example` directory and use it a starting point.
 
 This example will automatically initialise Flip counters on the website and can be used with the [presets on the demo site](https://pqina.nl/flip/#presets).
+
+![Flip Counter](./flip.png)
 
 
 ## Setup
