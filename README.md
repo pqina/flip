@@ -39,7 +39,7 @@ You can now copy past the [presets](https://pqina.nl/flip/#presets) to your webs
 
 ## Docs
 
-Information on how to customize Tick and use the Tick API can be found on the [product website](http://tickcounterplugin.com/docs).
+Information on how to customize Tick and use the Tick API can be found on the [product website](https://pqina.nl/tick/).
 
 ## License
 
