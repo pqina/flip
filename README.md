@@ -32,7 +32,7 @@ Then copy the following snippet and place it just before the closing `</body>` t
 
 Make sure the paths in the above code snippets match the location of the CSS and JS files.
 
-You can now copy past the [presets from pqina.nl/flip/](https://pqina.nl/flip/#presets) to your website and everything should function correctly.
+You can now copy past the [presets](https://pqina.nl/flip/#presets) to your website and everything should function correctly.
 
 
 ## Docs
