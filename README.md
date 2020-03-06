@@ -1,4 +1,4 @@
-![](https://pqina.nl/flip/promotion/countdown.gif)
+![](./flip.gif)
 
 # Flip Countdown
 
