@@ -38,6 +38,19 @@ Make sure the paths in the above code snippets match the location of the CSS and
 
 You can now copy past the [presets](https://pqina.nl/flip/#presets) to your website and everything should function correctly.
 
+### Install from NPM
+
+```
+npm i @pqina/flip --save
+```
+
+```js
+import Tick from '@pqina/flip';
+
+console.log(Tick);
+// logs {supported: true, options: {…}, helper: {…}, data: {…}, DOM: {…}, …}
+```
+
 
 ## Docs
 
