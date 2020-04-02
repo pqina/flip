@@ -4,7 +4,11 @@
 
 Flip is an advanced and beautiful flip counter plugin. Easy to use and highly flexible, you can set up a custom counter on your website in minutes. Display visitor counts, countdown to a special date or celebrate progress. Whatever you’re planning, the options are endless.
 
-[Learn more on the product site](https://pqina.nl/flip/)
+[Learn more about Flip on the product site](https://pqina.nl/flip/)
+
+[Learn more about Tick the engine that powers Flip](https://github.com/pqina/tick/)
+
+Made with ❤ By [Rik Schennink](https://twitter.com/rikschennink/)
 
 
 ## Quick Start
@@ -34,7 +38,25 @@ Make sure the paths in the above code snippets match the location of the CSS and
 
 You can now copy past the [presets](https://pqina.nl/flip/#presets) to your website and everything should function correctly.
 
+### Install from NPM
+
+```
+npm i @pqina/flip --save
+```
+
+```js
+import Tick from '@pqina/flip';
+
+console.log(Tick);
+// logs {supported: true, options: {…}, helper: {…}, data: {…}, DOM: {…}, …}
+```
+
 
 ## Docs
 
-Information on how to customize Tick and use the Tick API can be found on the [product website](http://tickcounterplugin.com/docs).
+Information on how to customize Tick and use the Tick API can be found on the [product website](https://pqina.nl/tick/).
+
+
+## License
+
+MIT License, Enjoy!
