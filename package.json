@@ -1,16 +1,29 @@
 {
-    "name": "flip",
-    "version": "1.7.1",
+    "name": "@pqina/flip",
+    "version": "1.7.5",
     "description": "A Beautifully Animated Flip Clock",
     "homepage": "https://pqina.nl/flip/",
-    "main": "index.js",
+    "main": "dist/flip.module.js",
+    "repository": "pqina/flip",
+    "keywords": [
+        "javascript",
+        "countdown",
+        "countup",
+        "event",
+        "flipclock",
+        "clock",
+        "animated"
+    ],
+    "files": [
+        "dist",
+        "tick"
+    ],
     "scripts": {
-        "build": "gulp build",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "gulp build"
     },
     "author": {
         "name": "PQINA",
-        "url": "http://pqina.nl/"
+        "url": "https://pqina.nl/"
     },
     "license": "MIT",
     "devDependencies": {
