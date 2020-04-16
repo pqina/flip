@@ -19,7 +19,7 @@ This example will automatically initialise Flip counters on the website and can 
 
 Or you can use one of the Codesandbox demos below:
 - [React](https://codesandbox.io/s/react-flip-demo-txoux)
-- [Vue](https://codesandbox.io/s/gifted-newton-xhtfk)
+- [Vue](https://codesandbox.io/s/vue-flip-demo-xhtfk)
 
 
 ## Setup
