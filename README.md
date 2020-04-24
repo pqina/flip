@@ -55,6 +55,12 @@ console.log(Tick);
 // logs {supported: true, options: {…}, helper: {…}, data: {…}, DOM: {…}, …}
 ```
 
+
+## Docs
+
+Information on how to customize Tick and use the Tick API can be found on the [product website](https://pqina.nl/tick/).
+
+
 ## Accessibility
 
 For better compatibility with screenreaders we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
@@ -86,12 +92,6 @@ function setupFlip(tick) {
 }
 </script>
 ```
-
-
-## Docs
-
-Information on how to customize Tick and use the Tick API can be found on the [product website](https://pqina.nl/tick/).
-
 
 ## License
 
