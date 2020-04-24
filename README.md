@@ -55,6 +55,38 @@ console.log(Tick);
 // logs {supported: true, options: {…}, helper: {…}, data: {…}, DOM: {…}, …}
 ```
 
+## Accessibility
+
+For better compatibility with screenreaders we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
+
+```html
+<div class="tick"
+     data-value="1234"
+     data-did-init="setupFlip">
+  
+    <!-- Hide visual content from screenreaders with `aria-hidden` -->
+    <div data-repeat="true" aria-hidden="true">
+        <span data-view="flip"></span>
+    </div>
+  
+</div>
+
+<script>
+function setupFlip(tick) {
+
+    Tick.helper.interval(function() {
+
+        tick.value++;
+
+        // Set `aria-label` attribute which screenreaders will read instead of HTML content
+        tick.root.setAttribute('aria-label', tick.value);
+
+    }, 1000);
+
+}
+</script>
+```
+
 
 ## Docs
 
