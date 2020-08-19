@@ -168,9 +168,7 @@ Array.prototype.includes = Array.prototype.includes||function(searchElement , fr
 		return false;
 	};
 
-/**
- * These polyfills are required for using Tick on IE 11
- */
+// These polyfills are required for using Tick on IE 11
 if (typeof Object.assign != 'function') {
 	Object.assign = function (target, varArgs) { // .length of function is 2
 		if (target == null) { // TypeError if undefined or null
@@ -241,7 +239,7 @@ if (!Object.keys) {
 /* eslint-disable */
 
 /*
- * flip v1.7.1 - A Beautifully Animated Flip Clock
+ * @pqina/flip v1.7.5 - A Beautifully Animated Flip Clock
  * Copyright (c) 2020 PQINA - https://pqina.nl/flip/
  */
 (function(root, undefined) {
@@ -745,8 +743,8 @@ module.exports = index;
 /* eslint-disable */
 
 /*
- * Tick v1.7.5 - Counters Made Easy
- * Copyright (c) 2019 PQINA - http://tickcounterplugin.com
+ * @pqina/tick v1.7.6 - Counters Made Easy
+ * Copyright (c) 2020 PQINA - https://github.com/pqina/tick/
  */
 (function(root, plugins, undefined) {
 	'use strict';
@@ -4809,9 +4807,9 @@ var getNextScheduledDate = function getNextScheduledDate(date, schedule) {
 		return toMoment(date, s);
 	}); // string to moment in time
 
-
 	// calculate closest moment
 	var nearest = null;
+
 	for (var i = 0; i < moments.length; i++) {
 
 		var moment = moments[i];
@@ -4821,7 +4819,11 @@ var getNextScheduledDate = function getNextScheduledDate(date, schedule) {
 			return null;
 		}
 
-		if (nearest === null || moment.dist < nearest.dist) {
+		if (nearest === null) {
+			nearest = moment;
+		} else if (nearest.dist === null && moment.dist !== null) {
+			nearest = moment;
+		} else if (moment.dist !== null && moment.dist < nearest.dist) {
 			nearest = moment;
 		}
 	}

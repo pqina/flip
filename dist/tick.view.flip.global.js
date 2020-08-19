@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 /*
- * flip v1.7.1 - A Beautifully Animated Flip Clock
+ * @pqina/flip v1.7.5 - A Beautifully Animated Flip Clock
  * Copyright (c) 2020 PQINA - https://pqina.nl/flip/
  */
 (function(root, undefined) {

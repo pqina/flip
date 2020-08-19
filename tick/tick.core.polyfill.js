@@ -168,9 +168,7 @@ Array.prototype.includes = Array.prototype.includes||function(searchElement , fr
 		return false;
 	};
 
-/**
- * These polyfills are required for using Tick on IE 11
- */
+// These polyfills are required for using Tick on IE 11
 if (typeof Object.assign != 'function') {
 	Object.assign = function (target, varArgs) { // .length of function is 2
 		if (target == null) { // TypeError if undefined or null

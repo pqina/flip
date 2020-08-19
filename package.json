@@ -1,6 +1,6 @@
 {
     "name": "@pqina/flip",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "description": "A Beautifully Animated Flip Clock",
     "homepage": "https://pqina.nl/flip/",
     "main": "dist/flip.module.js",
