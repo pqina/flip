@@ -17,6 +17,10 @@ If you just want to get on your way, copy the `example` directory and use it a s
 
 This example will automatically initialise Flip counters on the website and can be used with the [presets on the demo site](https://pqina.nl/flip/#presets).
 
+Or you can use one of the javascript framework codesandboxes below:
+- [React](https://codesandbox.io/s/react-flip-demo-txoux)
+- [Vue](https://codesandbox.io/s/vue-flip-demo-xhtfk)
+
 
 ## Setup
 
@@ -56,6 +60,38 @@ console.log(Tick);
 
 Information on how to customize Tick and use the Tick API can be found on the [product website](https://pqina.nl/tick/).
 
+
+## Accessibility
+
+For better compatibility with screenreaders we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
+
+```html
+<div class="tick"
+     data-value="1234"
+     data-did-init="setupFlip">
+  
+    <!-- Hide visual content from screenreaders with `aria-hidden` -->
+    <div data-repeat="true" aria-hidden="true">
+        <span data-view="flip"></span>
+    </div>
+  
+</div>
+
+<script>
+function setupFlip(tick) {
+
+    Tick.helper.interval(function() {
+
+        tick.value++;
+
+        // Set `aria-label` attribute which screenreaders will read instead of HTML content
+        tick.root.setAttribute('aria-label', tick.value);
+
+    }, 1000);
+
+}
+</script>
+```
 
 ## License
 
