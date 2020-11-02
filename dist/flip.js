@@ -239,7 +239,7 @@ if (!Object.keys) {
 /* eslint-disable */
 
 /*
- * @pqina/flip v1.7.7 - A Beautifully Animated Flip Clock
+ * @pqina/flip v1.8.0 - A Beautifully Animated Flip Clock
  * Copyright (c) 2020 PQINA - https://pqina.nl/flip/
  */
 (function(root, undefined) {
@@ -743,7 +743,7 @@ module.exports = index;
 /* eslint-disable */
 
 /*
- * @pqina/tick v1.7.6 - Counters Made Easy
+ * @pqina/tick v1.8.0 - Counters Made Easy
  * Copyright (c) 2020 PQINA - https://github.com/pqina/tick/
  */
 (function(root, plugins, undefined) {
@@ -3644,6 +3644,7 @@ var Tick = function () {
 		this._constants = null;
 		this._presets = null;
 		this._updater = null;
+		this._credits = null;
 
 		// callback methods
 		this._didInit = null;
@@ -3735,6 +3736,7 @@ var Tick = function () {
 			this._value = this._options.value;
 			this._presets = this._options.presets;
 			this._constants = this._options.constants;
+			this._credits = this._options.credits;
 
 			// no more use of options behind this line
 			// ---------------------------------------
@@ -3775,6 +3777,18 @@ var Tick = function () {
 
 			// done with init
 			this._didInit(this, this.value);
+
+			// credits
+			if (this._credits) {
+				var credits = document.createElement('a');
+				credits.className = 'tick-credits';
+				credits.href = this._credits.url;
+				credits.tabindex = -1;
+				credits.target = '_blank';
+				credits.rel = 'noopener noreferrer';
+				credits.textContent = this._credits.label;
+				this._element.appendChild(credits);
+			}
 		}
 	}, {
 		key: '_update',
@@ -3819,7 +3833,11 @@ var Tick = function () {
 				didInit: function didInit(tick) {},
 				didUpdate: function didUpdate(tick, value) {},
 				willDestroy: function willDestroy(tick) {},
-				didDestroy: function didDestroy(tick) {}
+				didDestroy: function didDestroy(tick) {},
+				credits: {
+					label: 'Powered by PQINA',
+					url: 'https://pqina.nl/?ref=credits'
+				}
 			};
 		}
 	}]);
@@ -3934,6 +3952,10 @@ var getOptionsFromAttributes = function getOptionsFromAttributes(element) {
 			value = value === null ? clone(defaults$$1[prop]) : value;
 			options[prop] = value;
 		}
+	}
+
+	if (dataset.credits === 'false') {
+		options.credits = false;
 	}
 
 	return options;

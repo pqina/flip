@@ -1,5 +1,5 @@
 /*
- * @pqina/tick v1.7.6 - Counters Made Easy
+ * @pqina/tick v1.8.0 - Counters Made Easy
  * Copyright (c) 2020 PQINA - https://github.com/pqina/tick/
  */
 .tick {
@@ -18,6 +18,14 @@
     max-width: 100%; }
   .tick span[data-view] {
     display: inline-block; }
+  .tick .tick-credits {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    opacity: .4;
+    text-decoration: none;
+    font-size: 11px;
+    color: inherit; }
   .tick [data-layout~='pad'] {
     margin: -.25em; }
     .tick [data-layout~='pad'] > * {
@@ -181,67 +189,3 @@
       right: 0;
       top: 0;
       bottom: 0; }
-
-/* 
-
-// Default Visual Style
-
-
-.tick-text[data-style*='transition'] {
-	// prevents width changes when animating between empty space and characters
-	min-width:1ex;
-	text-align:center;
-}
-
-// flipper
-.tick-flip {
-
-	// distance from other possible flippers
-	margin-left:.0625em;
-	margin-right:.0625em;
-
-	// prevents width changes when animating between empty space and characters
-	min-width:1.125em;
-
-	// sets default border radius
-	border-radius:.125em;
-
-	// default spacing
-	letter-spacing: .25em;
-	text-indent: .25em;
-}
-
-.tick-flip-front,
-.tick-flip-back {
-	color:#eee;
-	background-color:#333;
-	box-shadow:0 .125em .3125em rgba(0,0,0,.25), 0 .02125em .06125em rgba(0,0,0,.25);
-}
-
-// matrix
-.tick-matrix-char {
-	margin:0 .05em;
-}
-
-.tick-matrix-pixel {
-	width:5px;
-	height:5px;
-	margin:1px;
-	background-color:currentColor;
-	border-radius:2px;
-}
-
-// meter (horizontal / vertical)
-.tick-meter-rail {
-	background-color:#eee;
-}
-
-.tick-meter-fill {
-	background-color:currentColor;
-}
-
-// meter (ring)
-.tick-meter canvas {
-
-}
- */
