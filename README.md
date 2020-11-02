@@ -42,6 +42,17 @@ Make sure the paths in the above code snippets match the location of the CSS and
 
 You can now copy past the [presets](https://pqina.nl/flip/#presets) to your website and everything should function correctly.
 
+You can also load the files from a CDN like unpkg using the links below:
+
+```html
+<link href="https://unpkg.com/@pqina/flip/dist/flip.min.css" rel="stylesheet">
+```
+
+```html
+<script src="https://unpkg.com/@pqina/flip/dist/flip.min.js"></script>
+```
+
+
 ### Install from NPM
 
 ```
