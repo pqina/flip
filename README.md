@@ -1,14 +1,18 @@
-![](./flip.gif)
-
 # Flip Countdown
 
 Flip is an advanced and beautiful flip counter plugin. Easy to use and highly flexible, you can set up a custom counter on your website in minutes. Display visitor counts, countdown to a special date or celebrate progress. Whatever you’re planning, the options are endless.
 
-[Learn more about Flip on the product site](https://pqina.nl/flip/)
+![](./flip.gif)
 
-[Learn more about Tick the engine that powers Flip](https://github.com/pqina/tick/)
+[Learn more about Flip](https://pqina.nl/flip/) / [Learn more about Tick the engine that powers Flip](https://github.com/pqina/tick/)
 
-Made with ❤ By [Rik Schennink](https://twitter.com/rikschennink/)
+---
+
+[<img src="https://github.com/pqina/flip/blob/master/header.svg" alt=""/>](https://www.buymeacoffee.com/rikschennink/)
+
+[Buy me a Coffee](https://www.buymeacoffee.com/rikschennink/) / [Dev updates on Twitter](https://twitter.com/rikschennink/)
+
+---
 
 
 ## Quick Start
