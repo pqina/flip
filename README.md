@@ -17,9 +17,9 @@ Flip is an advanced and beautiful flip counter plugin. Easy to use and highly fl
 
 ## Quick Start
 
-If you just want to get on your way, copy the `example` directory and use it a starting point.
+If you just want to get on your way, copy the `example` directory and use it as a starting point.
 
-This example will automatically initialise Flip counters on the website and can be used with the [presets on the demo site](https://pqina.nl/flip/#presets).
+This example will automatically initialize Flip counters on the website and can be used with the [presets on the demo site](https://pqina.nl/flip/#presets).
 
 Or you can use one of the javascript framework codesandboxes below:
 - [React](https://codesandbox.io/s/react-flip-demo-txoux)
@@ -78,7 +78,7 @@ Information on how to customize Tick and use the Tick API can be found on the [p
 
 ## Accessibility
 
-For better compatibility with screenreaders we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
+For better compatibility with screenreaders, we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
 
 ```html
 <div class="tick"
