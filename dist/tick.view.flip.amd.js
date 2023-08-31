@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 /*
- * @pqina/flip v1.8.0 - A Beautifully Animated Flip Clock
- * Copyright (c) 2020 PQINA - https://pqina.nl/flip/
+ * @pqina/flip v1.8.1 - A Beautifully Animated Flip Clock
+ * Copyright (c) 2023 PQINA - https://pqina.nl/flip/
  */
 define(function() {
 	if (!module) {

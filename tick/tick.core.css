@@ -1,11 +1,10 @@
 /*
- * @pqina/tick v1.8.0 - Counters Made Easy
- * Copyright (c) 2020 PQINA - https://github.com/pqina/tick/
+ * @pqina/tick v1.8.1 - Counters Made Easy
+ * Copyright (c) 2023 PQINA - https://github.com/pqina/tick/
  */
 .tick {
   box-sizing: border-box;
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
   cursor: default;

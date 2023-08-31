@@ -239,8 +239,8 @@ if (!Object.keys) {
 /* eslint-disable */
 
 /*
- * @pqina/flip v1.8.0 - A Beautifully Animated Flip Clock
- * Copyright (c) 2020 PQINA - https://pqina.nl/flip/
+ * @pqina/flip v1.8.1 - A Beautifully Animated Flip Clock
+ * Copyright (c) 2023 PQINA - https://pqina.nl/flip/
  */
 (function(root, undefined) {
 	'use strict';
@@ -743,8 +743,8 @@ module.exports = index;
 /* eslint-disable */
 
 /*
- * @pqina/tick v1.8.0 - Counters Made Easy
- * Copyright (c) 2020 PQINA - https://github.com/pqina/tick/
+ * @pqina/tick v1.8.1 - Counters Made Easy
+ * Copyright (c) 2023 PQINA - https://github.com/pqina/tick/
  */
 (function(root, plugins, undefined) {
 	'use strict';
@@ -1906,84 +1906,82 @@ var cache = (function (value, fn) {
 	return CACHE[fns][value];
 });
 
-var isInt = new RegExp('^[0-9]+$');
-var isBoolean$1 = new RegExp('^(true|false)$');
-var isFloat = new RegExp('^[0-9.]+$');
-var isColor = new RegExp('color');
-var isShadow = new RegExp('shadow');
-var isGradient = new RegExp('^(follow-gradient|horizontal-gradient|vertical-gradient)');
-var isDuration = new RegExp('^[.0-9]+(?:ms|s){1}$');
-var isTransition = new RegExp('^transition-?(?:in|out)?$');
-var isURL = new RegExp('^url\\(');
+var isInt = new RegExp("^[0-9]+$");
+var isBoolean$1 = new RegExp("^(true|false)$");
+var isFloat = new RegExp("^[0-9.]+$");
+var isColor = new RegExp("color");
+var isShadow = new RegExp("shadow");
+var isGradient = new RegExp("^(follow-gradient|horizontal-gradient|vertical-gradient)");
+var isDuration = new RegExp("^[.0-9]+(?:ms|s){1}$");
+var isTransition = new RegExp("^transition-?(?:in|out)?$");
+var isURL = new RegExp("^url\\(");
 
 var toDuration = function toDuration(string) {
-	return string ? parseFloat(string) * (/ms$/.test(string) ? 1 : 1000) : 0;
+  return string ? parseFloat(string) * (/ms$/.test(string) ? 1 : 1000) : 0;
 };
 
 var toTransition = function toTransition(string) {
-	return string.match(/[a-z]+(?:\(.*?\))?\s?(?:origin\(.*?\))?\s?(?:[a-z]+\(.*?\))?[ .a-z-0-9]*/g).map(toTransitionPartial);
+  return string.match(/[a-z]+(?:\(.*?\))?\s?(?:origin\(.*?\))?\s?(?:[a-z]+\(.*?\))?[ .a-z-0-9]*/g).map(toTransitionPartial);
 };
 
 var toTransitionPartial = function toTransitionPartial(string) {
+  var parts = string.match(/([a-z]+(?:\(.*?\))?)\s?(?:origin\((.*?)\))?\s?([a-z]+(?:\(.*?\))?)?\s?(?:([.0-9ms]+)?\s?(?:(ease-[a-z-]+))?\s?([.0-9ms]+)?)?/);
 
-	var parts = string.match(/([a-z]+(?:\(.*?\))?)\s?(?:origin\((.*?)\))?\s?([a-z]+(?:\(.*?\))?)?\s?(?:([.0-9ms]+)?\s?(?:(ease-[a-z-]+))?\s?([.0-9ms]+)?)?/);
+  // get transition function definition
+  var fn = toFunctionOutline(parts[1]);
 
-	// get transition function definition
-	var fn = toFunctionOutline(parts[1]);
+  // get duration and easing
+  var origin = undefined;
+  var duration = undefined;
+  var ease = undefined;
+  var delay = undefined;
+  var resolver = undefined;
 
-	// get duration and easing
-	var origin = undefined;
-	var duration = undefined;
-	var ease = undefined;
-	var delay = undefined;
-	var resolver = undefined;
+  // skip function and figure out what other parts are
+  parts.slice(2).filter(function (part) {
+    return typeof part !== "undefined";
+  }).forEach(function (part) {
+    // is either duration or delay
+    if (isDuration.test(part)) {
+      if (typeof duration === "undefined") {
+        duration = toDuration(part);
+      } else {
+        delay = toDuration(part);
+      }
+    }
 
-	// skip function and figure out what other parts are
-	parts.slice(2).filter(function (part) {
-		return typeof part !== 'undefined';
-	}).forEach(function (part) {
+    // is origin if contains a space
+    else if (/ /.test(part)) {
+        origin = part;
+      }
 
-		// is either duration or delay
-		if (isDuration.test(part)) {
-			if (typeof duration === 'undefined') {
-				duration = toDuration(part);
-			} else {
-				delay = toDuration(part);
-			}
-		}
+      // should be ease
+      else if (/^ease-[a-z-]+$/.test(part)) {
+          ease = part;
+        }
 
-		// is origin if contains a space
-		else if (/ /.test(part)) {
-				origin = part;
-			}
+        // should be transform
+        else if (/^[a-z]+/.test(part)) {
+            resolver = toFunctionOutline(part);
+          }
+  });
 
-			// should be ease
-			else if (/^ease-[a-z-]+$/.test(part)) {
-					ease = part;
-				}
+  // reset easing and duration when transform is defined, these settings don't work together
+  if (resolver) {
+    duration = undefined;
+    ease = undefined;
+  }
 
-				// should be transform
-				else if (/^[a-z]+/.test(part)) {
-						resolver = toFunctionOutline(part);
-					}
-	});
-
-	// reset easing and duration when transform is defined, these settings don't work together
-	if (resolver) {
-		duration = undefined;
-		ease = undefined;
-	}
-
-	// return transition object
-	return {
-		name: fn.name,
-		parameters: fn.parameters,
-		duration: duration,
-		ease: ease,
-		delay: delay,
-		origin: origin,
-		resolver: resolver
-	};
+  // return transition object
+  return {
+    name: fn.name,
+    parameters: fn.parameters,
+    duration: duration,
+    ease: ease,
+    delay: delay,
+    origin: origin,
+    resolver: resolver
+  };
 };
 
 /**
@@ -1992,21 +1990,21 @@ var toTransitionPartial = function toTransitionPartial(string) {
  * @returns { {type: *, colors: *} }
  */
 var toGradient = function toGradient(string) {
-	var type = string.match(/follow-gradient|horizontal-gradient|vertical-gradient/)[0];
-	var colors = string.substr(type.length).match(/(?:transparent|rgb\(.*?\)|hsl\(.*?\)|hsla\(.*?\)|rgba\(.*?\)|[a-z]+|#[abcdefABCDEF\d]+)\s?(?:[\d]{1,3}%?)?/g).map(toGradientColor);
-	return {
-		type: type,
-		colors: colors
-	};
+  var type = string.match(/follow-gradient|horizontal-gradient|vertical-gradient/)[0];
+  var colors = string.substring(type.length).match(/(?:transparent|rgb\(.*?\)|hsl\(.*?\)|hsla\(.*?\)|rgba\(.*?\)|[a-z]+|#[abcdefABCDEF\d]+)\s?(?:[\d]{1,3}%?)?/g).map(toGradientColor);
+  return {
+    type: type,
+    colors: colors
+  };
 };
 
 var gradientOffsetRegex = /\s([\d]{1,3})%?$/;
 var toGradientColor = function toGradientColor(string) {
-	var offset = string.match(gradientOffsetRegex);
-	return {
-		offset: offset ? parseFloat(offset[1]) / 100 : null,
-		value: toColor(string.replace(gradientOffsetRegex, ''))
-	};
+  var offset = string.match(gradientOffsetRegex);
+  return {
+    offset: offset ? parseFloat(offset[1]) / 100 : null,
+    value: toColor(string.replace(gradientOffsetRegex, ""))
+  };
 };
 
 /**
@@ -2015,178 +2013,174 @@ var toGradientColor = function toGradientColor(string) {
 var pipetteCache = [];
 
 var getPipette = function getPipette(id, root) {
-	if (!pipetteCache[id]) {
-		return null;
-	}
-	return pipetteCache[id].find(function (p) {
-		return p.node.parentNode === root;
-	});
+  if (!pipetteCache[id]) {
+    return null;
+  }
+  return pipetteCache[id].find(function (p) {
+    return p.node.parentNode === root;
+  });
 };
 
 var setPipette = function setPipette(id, pipette) {
-	if (!pipetteCache[id]) {
-		pipetteCache[id] = [];
-	}
-	pipetteCache[id].push(pipette);
+  if (!pipetteCache[id]) {
+    pipetteCache[id] = [];
+  }
+  pipetteCache[id].push(pipette);
 };
 
-var toPixels = typeof document === 'undefined' ? function (value) {
-	return 0;
+var toPixels = typeof document === "undefined" ? function (value) {
+  return 0;
 } : function (value) {
-	var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document.body;
-	var id = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document.body;
+  var id = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
+  if (value == 0) {
+    return 0;
+  }
 
-	if (value == 0) {
-		return 0;
-	}
+  if (id) {
+    var _pipette = getPipette(id, root) || {};
+    if (!_pipette.node) {
+      _pipette.node = document.createElement("span");
+      _pipette.node.style.cssText = "position:absolute;padding:0;visibility:hidden;";
+      root.appendChild(_pipette.node);
+    }
 
-	if (id) {
+    // update value
+    _pipette.node.style.marginTop = value;
 
-		var _pipette = getPipette(id, root) || {};
-		if (!_pipette.node) {
-			_pipette.node = document.createElement('span');
-			_pipette.node.style.cssText = 'position:absolute;padding:0;visibility:hidden;';
-			root.appendChild(_pipette.node);
-		}
+    // compute style for first time
+    if (!_pipette.style) {
+      _pipette.style = window.getComputedStyle(_pipette.node);
+    }
 
-		// update value
-		_pipette.node.style.marginTop = value;
+    setPipette(id, _pipette);
 
-		// compute style for first time
-		if (!_pipette.style) {
-			_pipette.style = window.getComputedStyle(_pipette.node);
-		}
+    return parseInt(_pipette.style.marginTop, 10);
+  }
 
-		setPipette(id, _pipette);
-
-		return parseInt(_pipette.style.marginTop, 10);
-	}
-
-	// old method
-	var pipette = document.createElement('span');
-	pipette.style.cssText = 'position:absolute;padding:0;visibility:hidden;margin-top:' + value;
-	root.appendChild(pipette);
-	requestAnimationFrame(function () {
-		pipette.parentNode.removeChild(pipette);
-	});
-	return parseInt(window.getComputedStyle(pipette).marginTop, 10);
+  // old method
+  var pipette = document.createElement("span");
+  pipette.style.cssText = "position:absolute;padding:0;visibility:hidden;margin-top:" + value;
+  root.appendChild(pipette);
+  requestAnimationFrame(function () {
+    pipette.parentNode.removeChild(pipette);
+  });
+  return parseInt(window.getComputedStyle(pipette).marginTop, 10);
 };
 
 /**
  * @param string { string } - any valid CSS color value
  * @returns { string }
  */
-var toColor = typeof document === 'undefined' ? function (string) {
-	return string;
+var toColor = typeof document === "undefined" ? function (string) {
+  return string;
 } : function (string) {
-	if (string === 'transparent') {
-		return 'rgba(0,0,0,0)';
-	}
-	var pipette = document.createElement('span');
-	pipette.style.cssText = 'position:absolute;visibility:hidden;color:' + string;
-	document.body.appendChild(pipette);
-	requestAnimationFrame(function () {
-		pipette.parentNode.removeChild(pipette);
-	});
-	return window.getComputedStyle(pipette).getPropertyValue('color');
+  if (string === "transparent") {
+    return "rgba(0,0,0,0)";
+  }
+  var pipette = document.createElement("span");
+  pipette.style.cssText = "position:absolute;visibility:hidden;color:" + string;
+  document.body.appendChild(pipette);
+  requestAnimationFrame(function () {
+    pipette.parentNode.removeChild(pipette);
+  });
+  return window.getComputedStyle(pipette).getPropertyValue("color");
 };
 
 var toShadow = function toShadow(style) {
+  if (typeof style !== "string") {
+    return style;
+  }
 
-	if (typeof style !== 'string') {
-		return style;
-	}
-
-	return style.match(/([-.\d]+(?:%|ms|s|deg|cm|em|ch|ex|q|in|mm|pc|pt|px|vh|vw|vmin|vmax)?)|[%#A-Za-z0-9,.()]+/g);
+  return style.match(/([-.\d]+(?:%|ms|s|deg|cm|em|ch|ex|q|in|mm|pc|pt|px|vh|vw|vmin|vmax)?)|[%#A-Za-z0-9,.()]+/g);
 };
 
 var toURL = function toURL(style) {
-	var urls = style.match(/url\((.*?)\)/g).map(function (url) {
-		return url.substring(4, url.length - 1);
-	});
-	return urls.length === 1 ? urls[0] : urls;
+  var urls = style.match(/url\((.*?)\)/g).map(function (url) {
+    return url.substring(4, url.length - 1);
+  });
+  return urls.length === 1 ? urls[0] : urls;
 };
 
 var toStyleProperty = function toStyleProperty(key) {
-	return key.trim().split('-').map(function (key, index) {
-		return index > 0 ? capitalizeFirstLetter$1(key) : key;
-	}).join('');
+  return key.trim().split("-").map(function (key, index) {
+    return index > 0 ? capitalizeFirstLetter$1(key) : key;
+  }).join("");
 };
 
 var toStyleValue = function toStyleValue(value, property) {
+  if (isBoolean$1.test(value)) {
+    return toBoolean$1(value);
+  }
 
-	if (isBoolean$1.test(value)) {
-		return toBoolean$1(value);
-	}
+  if (isInt.test(value)) {
+    return parseInt(value, 10);
+  }
 
-	if (isInt.test(value)) {
-		return parseInt(value, 10);
-	}
+  if (isFloat.test(value)) {
+    return parseFloat(value);
+  }
 
-	if (isFloat.test(value)) {
-		return parseFloat(value);
-	}
+  if (isURL.test(value)) {
+    return toURL(value);
+  }
 
-	if (isURL.test(value)) {
-		return toURL(value);
-	}
+  if (isColor.test(property)) {
+    if (isGradient.test(value)) {
+      return cache(value, toGradient);
+    }
+    return cache(value, toColor);
+  }
 
-	if (isColor.test(property)) {
-		if (isGradient.test(value)) {
-			return cache(value, toGradient);
-		}
-		return cache(value, toColor);
-	}
+  if (isShadow.test(property)) {
+    return cache(value, toShadow);
+  }
 
-	if (isShadow.test(property)) {
-		return cache(value, toShadow);
-	}
+  if (isTransition.test(property)) {
+    if (value === "none") {
+      return value;
+    }
+    return cache(value, toTransition);
+  }
 
-	if (isTransition.test(property)) {
-		if (value === 'none') {
-			return value;
-		}
-		return cache(value, toTransition);
-	}
-
-	return value;
+  return value;
 };
 
 var toStyle = function toStyle(string) {
-	var parts = string.split(':').map(trim$1);
-	var property = toStyleProperty(parts[0]);
-	var value = toStyleValue(parts[1], parts[0]);
-	if (!property || value === null || typeof value === 'undefined') {
-		return null;
-	}
-	return {
-		property: property,
-		value: value
-	};
+  var parts = string.split(":").map(trim$1);
+  var property = toStyleProperty(parts[0]);
+  var value = toStyleValue(parts[1], parts[0]);
+  if (!property || value === null || typeof value === "undefined") {
+    return null;
+  }
+  return {
+    property: property,
+    value: value
+  };
 };
 
 var toStyles = function toStyles(string) {
-	return string.split(';')
+  return string.split(";")
 
-	// remove empty values
-	.filter(function (style) {
-		return style.trim().length;
-	})
+  // remove empty values
+  .filter(function (style) {
+    return style.trim().length;
+  })
 
-	// turn into objects
-	.map(toStyle)
+  // turn into objects
+  .map(toStyle)
 
-	// remove invalid styles
-	.filter(function (style) {
-		return style !== null;
-	})
+  // remove invalid styles
+  .filter(function (style) {
+    return style !== null;
+  })
 
-	// create styles object
-	.reduce(function (styles, style) {
-		styles[style.property] = style.value;
-		return styles;
-	}, {});
+  // create styles object
+  .reduce(function (styles, style) {
+    styles[style.property] = style.value;
+    return styles;
+  }, {});
 };
 
 // https://gist.github.com/gre/1650294
@@ -4148,6 +4142,9 @@ var setTimer = function setTimer(cb) {
 			cb(0);
 		}, 0);
 
+		// the moment the timeout should end
+		tickExpectedTime = now$2() + interval;
+
 		// listen for changes in visibility
 		startListeningForVisibilityChanges();
 
@@ -4156,9 +4153,6 @@ var setTimer = function setTimer(cb) {
 			didHideDocument();
 			return;
 		}
-
-		// the moment the timeout should end
-		tickExpectedTime = now$2() + interval;
 
 		// start ticking
 		timer = setTimeout(function () {
@@ -4296,143 +4290,136 @@ var setTimer = function setTimer(cb) {
 };
 
 var toInterval = function toInterval(string) {
-	if (!/^[\d]+/.test(string)) {
-		string = '1 ' + string;
-	}
-	var parts = string.split(' ');
-	return parseFloat(parts[0]) * TimeUnit[parts[1].toLowerCase()];
+  if (!/^[\d]+/.test(string)) {
+    string = "1 " + string;
+  }
+  var parts = string.split(" ");
+  return parseFloat(parts[0]) * TimeUnit[parts[1].toLowerCase()];
 };
 
 var toTime = function toTime(date, time) {
-	return setTime(date, time.split(':').map(toInt));
+  return setTime(date, time.split(":").map(toInt));
 };
 
 var toYearlyMoment = function toYearlyMoment(date, string) {
-
-	/*
+  /*
   every 1st of november at 12:00
   every 25th of november at 13:00 wait 10 seconds
   every 25th of november from 10 till 15 every 10 minutes
   */
 
-	var parts = string.match(/januari|februari|march|april|may|june|july|august|september|october|november|december|[\d]+th|\dst|\dnd|first|last|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
+  var parts = string.match(/januari|februari|march|april|may|june|july|august|september|october|november|december|[\d]+th|\dst|\dnd|first|last|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
 
-	// no `at time` supplied
-	if (parts.length > 1) {
-		var rest = '';
-		parts.forEach(function (p) {
-			rest = string.split(p)[1] || '';
-		});
-		var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
-		if (wait) {
-			parts.push(wait[0]);
-		}
-	}
+  // no `at time` supplied
+  if (parts.length > 1) {
+    var rest = "";
+    parts.forEach(function (p) {
+      rest = string.split(p)[1] || "";
+    });
+    var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
+    if (wait) {
+      parts.push(wait[0]);
+    }
+  }
 
-	// to moment object
-	var moment = parts.reduce(function (obj, part) {
+  // to moment object
+  var moment = parts.reduce(function (obj, part) {
+    // is month day (1st, 2nd, 12th, first, last)
+    if (/([\d]+th|\dst|\dnd|first|last)/.test(part)) {
+      obj.day = /^[\d]/.test(part) ? parseInt(part, 10) : part === "first" ? 1 : part;
+    }
 
-		// is month day (1st, 2nd, 12th, first, last)
-		if (/([\d]+th|\dst|\dnd|first|last)/.test(part)) {
-			obj.day = /^[\d]/.test(part) ? parseInt(part, 10) : part === 'first' ? 1 : part;
-		}
+    // if is time (at 12:00)
+    if (/^at/.test(part)) {
+      obj.time = toTime(clone$1(date), part.substring(3));
+    }
 
-		// if is time (at 12:00)
-		if (/^at/.test(part)) {
-			obj.time = toTime(clone$1(date), part.substr(3));
-		}
+    // is waiting period
+    else if (/wait/.test(part)) {
+        obj.idle = toInterval(part.substring(5));
+      }
 
-		// is waiting period
-		else if (/wait/.test(part)) {
-				obj.idle = toInterval(part.substr(5));
-			}
+      // must be month
+      else if (/^[\a-zA-Z]+$/.test(part)) {
+          obj.month = part;
+        }
 
-			// must be month
-			else if (/^[\a-zA-Z]+$/.test(part)) {
-					obj.month = part;
-				}
+    return obj;
+  }, {
+    idle: null,
+    day: null,
+    month: null,
+    time: null,
+    date: null,
+    dist: null,
+    wait: false
+  });
 
-		return obj;
-	}, {
-		idle: null,
-		day: null,
-		month: null,
-		time: null,
-		date: null,
-		dist: null,
-		wait: false
-	});
+  if (!moment.time) {
+    // set to day
+    // move to first day (so when the month changes its not accidentally out of range)
+    moment.time = clone$1(date);
+    moment.time.setDate(1);
+    moment.time = setMonth(moment.time, moment.month);
+    moment.time = setDayOfMonth(moment.time, moment.day);
 
-	if (!moment.time) {
+    // if so get first valid date and use that for time
+    var hourlyMoment = toHourlyMoment(moment.time, string);
 
-		// set to day
-		// move to first day (so when the month changes its not accidentally out of range)
-		moment.time = clone$1(date);
-		moment.time.setDate(1);
-		moment.time = setMonth(moment.time, moment.month);
-		moment.time = setDayOfMonth(moment.time, moment.day);
+    // waiting
+    if (hourlyMoment.wait) {
+      return moment;
+    }
 
-		// if so get first valid date and use that for time
-		var hourlyMoment = toHourlyMoment(moment.time, string);
+    // copy either date or from time
+    moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
 
-		// waiting
-		if (hourlyMoment.wait) {
-			return moment;
-		}
+    // test if has already passed, if so, set to hourly from for next month
+    var dist = moment.time - date;
+    if (dist < 0) {
+      // move to next year
+      moment.time = clone$1(hourlyMoment.from);
+      moment.time.setFullYear(moment.time.getFullYear() + 1);
 
-		// copy either date or from time
-		moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
+      // recalculate distance
+      dist = moment.time - date;
+    }
 
-		// test if has already passed, if so, set to hourly from for next month
-		var dist = moment.time - date;
-		if (dist < 0) {
+    moment.dist = dist;
+  } else {
+    // correct time to given month
+    moment.time.setDate(1);
+    moment.time = setMonth(moment.time, moment.month);
+    moment.time = setDayOfMonth(moment.time, moment.day);
 
-			// move to next year
-			moment.time = clone$1(hourlyMoment.from);
-			moment.time.setFullYear(moment.time.getFullYear() + 1);
+    var _dist = moment.time - date;
+    var distOverflow = 0;
+    if (_dist < 0) {
+      distOverflow = _dist;
 
-			// recalculate distance
-			dist = moment.time - date;
-		}
+      // move to next year
+      moment.time.setFullYear(moment.time.getFullYear() + 1);
 
-		moment.dist = dist;
-	} else {
+      // recalculate distance
+      _dist = moment.time - date;
+    }
 
-		// correct time to given month
-		moment.time.setDate(1);
-		moment.time = setMonth(moment.time, moment.month);
-		moment.time = setDayOfMonth(moment.time, moment.day);
+    // get total time from today to next moment
+    if (moment.idle !== null && distOverflow + moment.idle > 0) {
+      moment.wait = true;
+      return moment;
+    }
 
-		var _dist = moment.time - date;
-		var distOverflow = 0;
-		if (_dist < 0) {
+    moment.dist = _dist;
+  }
 
-			distOverflow = _dist;
+  moment.date = clone$1(moment.time);
 
-			// move to next year
-			moment.time.setFullYear(moment.time.getFullYear() + 1);
-
-			// recalculate distance
-			_dist = moment.time - date;
-		}
-
-		// get total time from today to next moment
-		if (moment.idle !== null && distOverflow + moment.idle > 0) {
-			moment.wait = true;
-			return moment;
-		}
-
-		moment.dist = _dist;
-	}
-
-	moment.date = clone$1(moment.time);
-
-	return moment;
+  return moment;
 };
 
 var toMonthlyMoment = function toMonthlyMoment(date, string) {
-
-	/*
+  /*
   every month on the 1st day
   every month on the first day
   every month on day the 12th
@@ -4445,413 +4432,398 @@ var toMonthlyMoment = function toMonthlyMoment(date, string) {
   every 20th day of the month from 10 till 14 every hour
   */
 
-	var parts = string.match(/[\d]+th|\dst|\dnd|first|last|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
+  var parts = string.match(/[\d]+th|\dst|\dnd|first|last|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
 
-	// no `at time` supplied
-	if (parts.length > 1) {
-		var rest = '';
-		parts.forEach(function (p) {
-			rest = string.split(p)[1] || '';
-		});
-		var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
-		if (wait) {
-			parts.push(wait[0]);
-		}
-	}
+  // no `at time` supplied
+  if (parts.length > 1) {
+    var rest = "";
+    parts.forEach(function (p) {
+      rest = string.split(p)[1] || "";
+    });
+    var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
+    if (wait) {
+      parts.push(wait[0]);
+    }
+  }
 
-	var moment = parts.reduce(function (obj, part) {
+  var moment = parts.reduce(function (obj, part) {
+    // is month day (1st, 2nd, 12th, first, last)
+    if (/([\d]+th|\dst|\dnd|first|last)/.test(part)) {
+      obj.day = /^[\d]/.test(part) ? parseInt(part, 10) : part === "first" ? 1 : part;
+    }
 
-		// is month day (1st, 2nd, 12th, first, last)
-		if (/([\d]+th|\dst|\dnd|first|last)/.test(part)) {
-			obj.day = /^[\d]/.test(part) ? parseInt(part, 10) : part === 'first' ? 1 : part;
-		}
+    // if is time (at 12:00)
+    if (/^at/.test(part)) {
+      obj.time = toTime(clone$1(date), part.substring(3));
+    }
 
-		// if is time (at 12:00)
-		if (/^at/.test(part)) {
-			obj.time = toTime(clone$1(date), part.substr(3));
-		}
+    // is waiting period
+    else if (/wait/.test(part)) {
+        obj.idle = toInterval(part.substring(5));
+      }
 
-		// is waiting period
-		else if (/wait/.test(part)) {
-				obj.idle = toInterval(part.substr(5));
-			}
+    return obj;
+  }, {
+    idle: null,
+    day: null,
+    time: null,
+    date: null,
+    dist: null,
+    wait: false
+  });
 
-		return obj;
-	}, {
-		idle: null,
-		day: null,
-		time: null,
-		date: null,
-		dist: null,
-		wait: false
-	});
+  if (!moment.time) {
+    // set to day
+    moment.time = setDayOfMonth(clone$1(date), moment.day);
 
-	if (!moment.time) {
+    // if so get first valid date and use that for time
+    var hourlyMoment = toHourlyMoment(moment.time, string);
 
-		// set to day
-		moment.time = setDayOfMonth(clone$1(date), moment.day);
+    // waiting
+    if (hourlyMoment.wait) {
+      return moment;
+    }
 
-		// if so get first valid date and use that for time
-		var hourlyMoment = toHourlyMoment(moment.time, string);
+    // copy either date or from time
+    moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
 
-		// waiting
-		if (hourlyMoment.wait) {
-			return moment;
-		}
+    // test if has already passed, if so, set to hourly from for next month
+    var dist = moment.time - date;
+    if (dist < 0) {
+      // move to next month (set to first day of month)
+      moment.time = clone$1(hourlyMoment.from);
+      moment.time.setDate(1);
+      moment.time.setMonth(moment.time.getMonth() + 1);
 
-		// copy either date or from time
-		moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
+      // now set to expected day
+      setDayOfMonth(moment.time, moment.day);
 
-		// test if has already passed, if so, set to hourly from for next month
-		var dist = moment.time - date;
-		if (dist < 0) {
+      // recalculate distance
+      dist = moment.time - date;
+    }
 
-			// move to next month (set to first day of month)
-			moment.time = clone$1(hourlyMoment.from);
-			moment.time.setDate(1);
-			moment.time.setMonth(moment.time.getMonth() + 1);
+    moment.dist = dist;
+  } else {
+    // correct time to set week day
+    moment.time = setDayOfMonth(moment.time, moment.day);
 
-			// now set to expected day
-			setDayOfMonth(moment.time, moment.day);
+    var _dist2 = moment.time - date;
+    var distOverflow = 0;
+    if (_dist2 < 0) {
+      distOverflow = _dist2;
 
-			// recalculate distance
-			dist = moment.time - date;
-		}
+      // move to next month (set to first day of month)
+      moment.time.setDate(1);
+      moment.time.setMonth(moment.time.getMonth() + 1);
 
-		moment.dist = dist;
-	} else {
+      // now set to expected day
+      setDayOfMonth(moment.time, moment.day);
 
-		// correct time to set week day
-		moment.time = setDayOfMonth(moment.time, moment.day);
+      // recalculate distance
+      _dist2 = moment.time - date;
+    }
 
-		var _dist2 = moment.time - date;
-		var distOverflow = 0;
-		if (_dist2 < 0) {
+    // get total time from today to next moment
+    if (moment.idle !== null && distOverflow + moment.idle > 0) {
+      moment.wait = true;
+      return moment;
+    }
 
-			distOverflow = _dist2;
+    moment.dist = _dist2;
+  }
 
-			// move to next month (set to first day of month)
-			moment.time.setDate(1);
-			moment.time.setMonth(moment.time.getMonth() + 1);
+  moment.date = clone$1(moment.time);
 
-			// now set to expected day
-			setDayOfMonth(moment.time, moment.day);
-
-			// recalculate distance
-			_dist2 = moment.time - date;
-		}
-
-		// get total time from today to next moment
-		if (moment.idle !== null && distOverflow + moment.idle > 0) {
-			moment.wait = true;
-			return moment;
-		}
-
-		moment.dist = _dist2;
-	}
-
-	moment.date = clone$1(moment.time);
-
-	return moment;
+  return moment;
 };
 
 var toWeeklyMoment = function toWeeklyMoment(date, string) {
+  // - every wednesday at 12:00
+  // - every wednesday at 12:00 wait 10 minutes
+  // - wednesday every hour
+  // - wednesday from 10 till 14 every hour
+  // - wednesday 12:00, thursday 14:00
+  // - tuesday 10:00 wait 2 hours
+  // - tuesday 10:00 wait 2 hours, saturday 10:00 wait 2 hours
+  // - every tuesday every 5 minutes
+  // - wednesday from 10 till 14 every hour
+  // - every tuesday every 5 minutes wait 10 seconds
+  // - every tuesday from 10 till 12 every 5 minutes wait 10 seconds
+  // - every tuesday every 5 minutes from 10 till 12 wait 10 seconds
+  // - every tuesday at 12:00 wait 5 minutes
 
-	// - every wednesday at 12:00
-	// - every wednesday at 12:00 wait 10 minutes
-	// - wednesday every hour
-	// - wednesday from 10 till 14 every hour
-	// - wednesday 12:00, thursday 14:00
-	// - tuesday 10:00 wait 2 hours
-	// - tuesday 10:00 wait 2 hours, saturday 10:00 wait 2 hours
-	// - every tuesday every 5 minutes
-	// - wednesday from 10 till 14 every hour
-	// - every tuesday every 5 minutes wait 10 seconds
-	// - every tuesday from 10 till 12 every 5 minutes wait 10 seconds
-	// - every tuesday every 5 minutes from 10 till 12 wait 10 seconds
-	// - every tuesday at 12:00 wait 5 minutes
+  // strip week part and then feed rest to toDaily() or Hourly() method
+  var parts = string.match(/(?:mon|tues|wednes|thurs|fri|satur|sun)day|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
 
-	// strip week part and then feed rest to toDaily() or Hourly() method
-	var parts = string.match(/(?:mon|tues|wednes|thurs|fri|satur|sun)day|at\s[\d]+(?::[\d]+)?(?::[\d]+)?/g);
+  // no `at time` supplied
+  if (parts.length > 1) {
+    var rest = "";
+    parts.forEach(function (p) {
+      rest = string.split(p)[1] || "";
+    });
+    var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
+    if (wait) {
+      parts.push(wait[0]);
+    }
+  }
 
-	// no `at time` supplied
-	if (parts.length > 1) {
-		var rest = '';
-		parts.forEach(function (p) {
-			rest = string.split(p)[1] || '';
-		});
-		var wait = rest.trim().match(/wait\s[\d]+\s[a-z]+/);
-		if (wait) {
-			parts.push(wait[0]);
-		}
-	}
+  // to moment object
+  var moment = parts.reduce(function (obj, part) {
+    // is day
+    if (/(?:mon|tues|wednes|thurs|fri|satur|sun)day/.test(part)) {
+      obj.day = Days[capitalizeFirstLetter(part)];
+    }
 
-	// to moment object
-	var moment = parts.reduce(function (obj, part) {
+    // if is time (at 12:00)
+    if (/^at/.test(part)) {
+      obj.time = toTime(clone$1(date), part.substring(3));
+    }
 
-		// is day
-		if (/(?:mon|tues|wednes|thurs|fri|satur|sun)day/.test(part)) {
-			obj.day = Days[capitalizeFirstLetter(part)];
-		}
+    // is waiting period
+    else if (/wait/.test(part)) {
+        obj.idle = toInterval(part.substring(5));
+      }
 
-		// if is time (at 12:00)
-		if (/^at/.test(part)) {
-			obj.time = toTime(clone$1(date), part.substr(3));
-		}
+    return obj;
+  }, {
+    idle: null,
+    day: null,
+    time: null,
+    date: null,
+    dist: null,
+    wait: false
+  });
 
-		// is waiting period
-		else if (/wait/.test(part)) {
-				obj.idle = toInterval(part.substr(5));
-			}
+  // if no time set see if a hourly period was defined
+  if (!moment.time) {
+    // set to day
+    moment.time = setDay(clone$1(date), moment.day);
 
-		return obj;
-	}, {
-		idle: null,
-		day: null,
-		time: null,
-		date: null,
-		dist: null,
-		wait: false
-	});
+    // if so get first valid date and use that for time
+    var hourlyMoment = toHourlyMoment(moment.time, string);
 
-	// if no time set see if a hourly period was defined
-	if (!moment.time) {
+    // waiting
+    if (hourlyMoment.wait) {
+      return moment;
+    }
 
-		// set to day
-		moment.time = setDay(clone$1(date), moment.day);
+    // copy either date or from time
+    moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
 
-		// if so get first valid date and use that for time
-		var hourlyMoment = toHourlyMoment(moment.time, string);
+    // test if has already passed, if so, set to hourly from for next week
+    var dist = moment.time - date;
 
-		// waiting
-		if (hourlyMoment.wait) {
-			return moment;
-		}
+    if (dist < 0) {
+      moment.time.setDate(moment.time.getDate() + 7);
+    }
 
-		// copy either date or from time
-		moment.time = clone$1(sameDate(date, moment.time) && hourlyMoment.date ? hourlyMoment.date : hourlyMoment.from);
+    moment.dist = dist;
+  } else {
+    // correct time to set week day
+    moment.time = setDay(moment.time, moment.day);
 
-		// test if has already passed, if so, set to hourly from for next week
-		var dist = moment.time - date;
+    var _dist3 = moment.time - date;
+    if (_dist3 < 0) {
+      moment.time.setDate(moment.time.getDate() + 7);
+      _dist3 = moment.time - date;
+    }
 
-		if (dist < 0) {
-			moment.time.setDate(moment.time.getDate() + 7);
-		}
+    // if is idling
+    if (moment.idle !== null && _dist3 >= TimeUnit.Week - moment.idle) {
+      moment.wait = true;
+      return moment;
+    }
 
-		moment.dist = dist;
-	} else {
+    moment.dist = _dist3;
+  }
 
-		// correct time to set week day
-		moment.time = setDay(moment.time, moment.day);
+  moment.date = clone$1(moment.time);
 
-		var _dist3 = moment.time - date;
-		if (_dist3 < 0) {
-			moment.time.setDate(moment.time.getDate() + 7);
-			_dist3 = moment.time - date;
-		}
-
-		// if is idling
-		if (moment.idle !== null && _dist3 >= TimeUnit.Week - moment.idle) {
-			moment.wait = true;
-			return moment;
-		}
-
-		moment.dist = _dist3;
-	}
-
-	moment.date = clone$1(moment.time);
-
-	return moment;
+  return moment;
 };
 
 var toDailyMoment = function toDailyMoment(date, string) {
-	// - every day at 10
-	// - every day at 14:00
-	// - every day at 14:30 wait 5 minutes
+  // - every day at 10
+  // - every day at 14:00
+  // - every day at 14:30 wait 5 minutes
 
-	// get parts
-	var parts = string.match(/([\d]+(?::[\d]+)?(?::[\d]+)?)|(wait\s[\d]+\s[a-z]+)/g);
+  // get parts
+  var parts = string.match(/([\d]+(?::[\d]+)?(?::[\d]+)?)|(wait\s[\d]+\s[a-z]+)/g);
 
-	// to moment object
-	var moment = parts.reduce(function (obj, part) {
+  // to moment object
+  var moment = parts.reduce(function (obj, part) {
+    // if is time
+    if (/^[\d]/.test(part)) {
+      obj.time = toTime(clone$1(date), part);
+    }
 
-		// if is time
-		if (/^[\d]/.test(part)) {
-			obj.time = toTime(clone$1(date), part);
-		}
+    // is waiting period
+    else if (/wait/.test(part)) {
+        obj.idle = toInterval(part.substring(5));
+      }
 
-		// is waiting period
-		else if (/wait/.test(part)) {
-				obj.idle = toInterval(part.substr(5));
-			}
+    return obj;
+  }, {
+    idle: null,
+    time: null,
+    date: null,
+    wait: false,
+    dist: null
+  });
 
-		return obj;
-	}, {
-		idle: null,
-		time: null,
-		date: null,
-		wait: false,
-		dist: null
-	});
+  var dist = moment.time - date;
 
-	var dist = moment.time - date;
+  // if time dist is negative set time to tomorrow
+  if (dist < 0) {
+    moment.time.setDate(moment.time.getDate() + 1);
+    dist = moment.time - date;
+  }
 
-	// if time dist is negative set time to tomorrow
-	if (dist < 0) {
-		moment.time.setDate(moment.time.getDate() + 1);
-		dist = moment.time - date;
-	}
+  // test if wait period has passed
+  if (moment.idle !== null && dist >= TimeUnit.Day - moment.idle) {
+    moment.wait = true;
+    return moment;
+  }
 
-	// test if wait period has passed
-	if (moment.idle !== null && dist >= TimeUnit.Day - moment.idle) {
-		moment.wait = true;
-		return moment;
-	}
+  moment.dist = dist;
+  moment.date = clone$1(moment.time);
 
-	moment.dist = dist;
-	moment.date = clone$1(moment.time);
-
-	return moment;
+  return moment;
 };
 
 var toHourlyMoment = function toHourlyMoment(date, string) {
+  // - from 10 till 20 every hour wait 5 minutes
+  // - from 10:00:00 till 14:00 every 15 minutes
+  // - every hour
+  // - every 20 minutes
+  // - every 30 seconds
 
-	// - from 10 till 20 every hour wait 5 minutes
-	// - from 10:00:00 till 14:00 every 15 minutes
-	// - every hour
-	// - every 20 minutes
-	// - every 30 seconds
+  // get parts
+  var parts = string.match(/((?:[\d]+\s)?(?:hours|hour|minutes|minute|seconds|second))|((?:from|till)\s[\d]+(?::[\d]+)?(?::[\d]+)?)|(wait\s[\d]+\s[a-z]+)/g);
 
-	// get parts
-	var parts = string.match(/((?:[\d]+\s)?(?:hours|hour|minutes|minute|seconds|second))|((?:from|till)\s[\d]+(?::[\d]+)?(?::[\d]+)?)|(wait\s[\d]+\s[a-z]+)/g);
+  // to moment object
+  var moment = parts.reduce(function (obj, part) {
+    // if is time
+    if (/from/.test(part)) {
+      obj.from = toTime(obj.from, part.split(" ")[1]);
+    } else if (/till/.test(part)) {
+      obj.till = toTime(obj.till, part.split(" ")[1]);
+    }
 
-	// to moment object
-	var moment = parts.reduce(function (obj, part) {
+    // is waiting period
+    else if (/wait/.test(part)) {
+        obj.idle = toInterval(part.substring(5));
+      }
 
-		// if is time
-		if (/from/.test(part)) {
-			obj.from = toTime(obj.from, part.split(' ')[1]);
-		} else if (/till/.test(part)) {
-			obj.till = toTime(obj.till, part.split(' ')[1]);
-		}
+      // if is interval
+      else if (/hours|hour|minutes|minute|seconds|second/.test(part)) {
+          obj.interval = toInterval(part);
+        }
 
-		// is waiting period
-		else if (/wait/.test(part)) {
-				obj.idle = toInterval(part.substr(5));
-			}
+    return obj;
+  }, {
+    idle: null,
+    interval: null,
+    date: null,
+    dist: null,
+    wait: false,
+    from: toTime(clone$1(date), "0"),
+    till: toTime(clone$1(date), "23:59:59:999")
+  });
 
-			// if is interval
-			else if (/hours|hour|minutes|minute|seconds|second/.test(part)) {
-					obj.interval = toInterval(part);
-				}
+  // if valid moment
+  if (date < moment.from || date >= moment.till) {
+    return moment;
+  }
 
-		return obj;
-	}, {
-		idle: null,
-		interval: null,
-		date: null,
-		dist: null,
-		wait: false,
-		from: toTime(clone$1(date), '0'),
-		till: toTime(clone$1(date), '23:59:59:999')
-	});
+  // calculate if interval fits in duration
+  if (moment.interval > moment.till - moment.from) {
+    return moment;
+  }
 
-	// if valid moment
-	if (date < moment.from || date >= moment.till) {
-		return moment;
-	}
+  // time passed since start of moment
+  var diff = date - moment.from;
 
-	// calculate if interval fits in duration
-	if (moment.interval > moment.till - moment.from) {
-		return moment;
-	}
+  // interval duration minus all intervals that fitted in the passed time since start
+  // 200 - (diff % interval)
+  // 200 - (1450 % 200)
+  // 200 - 50
+  // 150 till next moment
+  var dist = moment.interval - diff % moment.interval;
 
-	// time passed since start of moment
-	var diff = date - moment.from;
+  // test if wait period has passed
+  if (moment.idle !== null && dist >= moment.interval - moment.idle) {
+    moment.wait = true;
+    return moment;
+  }
 
-	// interval duration minus all intervals that fitted in the passed time since start
-	// 200 - (diff % interval)
-	// 200 - (1450 % 200)
-	// 200 - 50
-	// 150 till next moment
-	var dist = moment.interval - diff % moment.interval;
+  // set as final distance
+  moment.dist = dist;
 
-	// test if wait period has passed
-	if (moment.idle !== null && dist >= moment.interval - moment.idle) {
-		moment.wait = true;
-		return moment;
-	}
+  // turn into date by adding to current time
+  moment.date = new Date(date.getTime() + moment.dist);
 
-	// set as final distance
-	moment.dist = dist;
-
-	// turn into date by adding to current time
-	moment.date = new Date(date.getTime() + moment.dist);
-
-	return moment;
+  return moment;
 };
 
 var toMoment = function toMoment(date, string) {
+  // test yearly schedules
+  if (/januari|februari|march|april|may|june|july|august|september|october|november|december/.test(string)) {
+    return toYearlyMoment(date, string);
+  }
 
-	// test yearly schedules
-	if (/januari|februari|march|april|may|june|july|august|september|october|november|december/.test(string)) {
-		return toYearlyMoment(date, string);
-	}
+  // test for monthly schedules
+  if (/month/.test(string)) {
+    return toMonthlyMoment(date, string);
+  }
 
-	// test for monthly schedules
-	if (/month/.test(string)) {
-		return toMonthlyMoment(date, string);
-	}
+  // test for weekly schedules
+  if (/(?:mon|tues|wednes|thurs|fri|satur|sun)day/.test(string)) {
+    return toWeeklyMoment(date, string);
+  }
 
-	// test for weekly schedules
-	if (/(?:mon|tues|wednes|thurs|fri|satur|sun)day/.test(string)) {
-		return toWeeklyMoment(date, string);
-	}
+  // test for daily schedules
+  if (/day at/.test(string) || /^at /.test(string)) {
+    return toDailyMoment(date, string);
+  }
 
-	// test for daily schedules
-	if (/day at/.test(string) || /^at /.test(string)) {
-		return toDailyMoment(date, string);
-	}
+  // test for hourly schedules
+  if (/hours|hour|minutes|minute|seconds|second/.test(string)) {
+    return toHourlyMoment(date, string);
+  }
 
-	// test for hourly schedules
-	if (/hours|hour|minutes|minute|seconds|second/.test(string)) {
-		return toHourlyMoment(date, string);
-	}
-
-	return null;
+  return null;
 };
 
 var getNextScheduledDate = function getNextScheduledDate(date, schedule) {
+  // create moments
+  var moments = schedule.split(",").map(trim) // remove whitespace
+  .map(function (s) {
+    return toMoment(date, s);
+  }); // string to moment in time
 
-	// create moments
-	var moments = schedule.split(',').map(trim) // remove whitespace
-	.map(function (s) {
-		return toMoment(date, s);
-	}); // string to moment in time
+  // calculate closest moment
+  var nearest = null;
 
-	// calculate closest moment
-	var nearest = null;
+  for (var i = 0; i < moments.length; i++) {
+    var moment = moments[i];
 
-	for (var i = 0; i < moments.length; i++) {
+    // currently waiting
+    if (nearest === null && moment.wait) {
+      return null;
+    }
 
-		var moment = moments[i];
+    if (nearest === null) {
+      nearest = moment;
+    } else if (nearest.dist === null && moment.dist !== null) {
+      nearest = moment;
+    } else if (moment.dist !== null && moment.dist < nearest.dist) {
+      nearest = moment;
+    }
+  }
 
-		// currently waiting
-		if (nearest === null && moment.wait) {
-			return null;
-		}
-
-		if (nearest === null) {
-			nearest = moment;
-		} else if (nearest.dist === null && moment.dist !== null) {
-			nearest = moment;
-		} else if (moment.dist !== null && moment.dist < nearest.dist) {
-			nearest = moment;
-		}
-	}
-
-	// return nearest date
-	return nearest.date;
+  // return nearest date
+  return nearest.date;
 };
 
 /**
