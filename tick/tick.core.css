@@ -1,5 +1,5 @@
 /*
- * @pqina/tick v1.8.1 - Counters Made Easy
+ * @pqina/tick v1.8.2 - Counters Made Easy
  * Copyright (c) 2023 PQINA - https://github.com/pqina/tick/
  */
 .tick {
@@ -21,7 +21,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    opacity: .4;
+    opacity: 0.4;
     text-decoration: none;
     font-size: 11px;
     color: inherit; }

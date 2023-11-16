@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 /*
- * @pqina/tick v1.8.1 - Counters Made Easy
+ * @pqina/tick v1.8.2 - Counters Made Easy
  * Copyright (c) 2023 PQINA - https://github.com/pqina/tick/
  */
 (function($, plugins, undefined){
@@ -558,76 +558,77 @@ var grouper = (function (state, definition) {
  * @param drawViews
  */
 var drawer = (function (state, _draw, drawViews, present) {
+    return {
+        draw: function draw() {
+            // not dirty, might need to draw subviews
+            if (!state.dirty) {
+                if (drawViews) {
+                    // draw sub views
+                    var redrawn = drawViews(state);
+                    if (redrawn) {
+                        // let's fit it! (if necessary)
+                        fit(state);
+                    }
+                }
+                return false;
+            }
 
-	return {
-		draw: function draw() {
+            // draw everything
+            _draw(state, present);
 
-			// not dirty, might need to draw subviews
-			if (!state.dirty) {
-				if (drawViews) {
+            // let's fit this view (if necessary)
+            fit(state);
 
-					// draw sub views
-					var redrawn = drawViews(state);
-					if (redrawn) {
-						// let's fit it! (if necessary)
-						fit(state);
-					}
-				}
-				return false;
-			}
+            // no longer dirty
+            state.dirty = false;
 
-			// draw everything
-			_draw(state, present);
-
-			// let's fit this view (if necessary)
-			fit(state);
-
-			// no longer dirty
-			state.dirty = false;
-
-			return true;
-		}
-	};
+            return true;
+        }
+    };
 });
 
 var fit = function fit(state) {
+    if (!state.fit) {
+        // nope
+        if (!state.root || !(state.root.getAttribute('data-layout') || '').match(/fit/)) {
+            state.fit = false;
+            return;
+        }
 
-	if (!state.fit) {
+        // create fit info object
+        var style = window.getComputedStyle(state.root, null);
 
-		// nope
-		if (!state.root || !(state.root.getAttribute('data-layout') || '').match(/fit/)) {
-			state.fit = false;
-			return;
-		}
+        state.fit = true;
+        state.fitInfo = {
+            currentFontSize: parseInt(style.getPropertyValue('font-size'), 10)
+        };
+    }
 
-		// create fit info object
-		var style = window.getComputedStyle(state.root, null);
-		state.fit = true;
-		state.fitInfo = {
-			currentFontSize: parseInt(style.getPropertyValue('font-size'), 10)
-		};
-	}
+    // get available width from parent node
+    state.fitInfo.availableWidth = state.root.parentNode.clientWidth;
 
-	// get available width from parent node
-	state.fitInfo.availableWidth = state.root.parentNode.clientWidth;
+    // the space our target element uses
+    state.fitInfo.currentWidth = state.root.scrollWidth;
 
-	// the space our target element uses
-	state.fitInfo.currentWidth = state.root.scrollWidth;
+    // let's calculate the new font size
+    var newFontSize = Math.min(Math.max(4, state.fitInfo.availableWidth / state.fitInfo.currentWidth * state.fitInfo.currentFontSize), 1024);
 
-	// let's calculate the new font size
-	var newFontSize = Math.min(Math.max(4, state.fitInfo.availableWidth / state.fitInfo.currentWidth * state.fitInfo.currentFontSize), 1024);
+    // size has not changed enough?
+    var dist = Math.abs(newFontSize - state.fitInfo.currentFontSize);
 
-	// size has not changed enough?
-	var dist = Math.abs(newFontSize - state.fitInfo.currentFontSize);
+    // prevents flickering on firefox / safari / ie by not redrawing tiny font size changes
+    if (dist <= 1) return;
 
-	if (dist <= 1) {
-		// prevents flickering on firefox / safari / ie by not redrawing tiny font size changes
-		return;
-	}
+    state.fitInfo.currentFontSize = newFontSize;
 
-	state.fitInfo.currentFontSize = newFontSize;
+    state.root.style.fontSize = state.fitInfo.currentFontSize + 'px';
 
-	state.root.style.fontSize = state.fitInfo.currentFontSize + 'px';
+    // redraw once more to quickly create better fit
+    if (state.fitInfo.currentWidth / state.fitInfo.availableWidth < 0.5) {
+        requestAnimationFrame(function () {
+            return fit(state);
+        });
+    }
 };
 
 var updater = (function (state) {
@@ -888,74 +889,69 @@ var toConsumableArray = function (arr) {
 };
 
 var draw = function draw(state, present) {
+    var views = (state.definition || []).concat();
 
-	var views = (state.definition || []).concat();
+    if (state.align === 'right') {
+        views.reverse();
+    }
 
-	if (state.align === 'right') {
-		views.reverse();
-	}
+    var value = Array.isArray(state.value) ? state.value.concat() : _typeof(state.value) === 'object' ? clone(state.value) : state.value;
 
-	var value = Array.isArray(state.value) ? state.value.concat() : _typeof(state.value) === 'object' ? clone(state.value) : state.value;
+    views.forEach(function (view) {
+        if (!view.presenter) {
+            state.update = present(view);
+            if (!view.presenter) {
+                return;
+            }
+            view.presenter.appendTo(state.root);
+        }
+    });
 
-	views.forEach(function (view) {
+    views.filter(function (view) {
+        return view.presenter !== undefined;
+    }).forEach(function (view) {
+        if (Array.isArray(value) && state.valueMapping) {
+            // if set to indexes divide values over views, else (must be "none") just pass array
+            state.update(view, state.valueMapping === 'indexes' ? state.align === 'right' ? value.pop() : value.shift() : value);
+        } else if (view.key && value[view.key] !== undefined) {
+            // view expects a key so value should be object
+            state.update(view, value[view.key]);
+        } else {
+            // just pass on value to all sub views
+            state.update(view, value);
+        }
+    });
 
-		if (!view.presenter) {
-			state.update = present(view);
-			if (!view.presenter) {
-				return;
-			}
-			view.presenter.appendTo(state.root);
-		}
-	});
+    state.views = views;
 
-	views.filter(function (view) {
-		return view.presenter !== undefined;
-	}).forEach(function (view) {
-
-		if (Array.isArray(value) && state.valueMapping) {
-			// if set to indexes divide values over views, else (must be "none") just pass array
-			state.update(view, state.valueMapping === 'indexes' ? state.align === 'right' ? value.pop() : value.shift() : value);
-		} else if (view.key && value[view.key] !== undefined) {
-			// view expects a key so value should be object
-			state.update(view, value[view.key]);
-		} else {
-			// just pass on value to all sub views
-			state.update(view, value);
-		}
-	});
-
-	state.views = views;
-
-	// also draw subviews
-	drawViews(state);
+    // also draw subviews
+    drawViews(state);
 };
 
 var drawViews = function drawViews(state) {
-
-	var redrawn = false;
-	state.views.filter(function (view) {
-		return view.presenter !== undefined;
-	}).forEach(function (view) {
-		if (view.presenter.draw()) {
-			redrawn = true;
-		}
-	});
-	return redrawn;
+    var redrawn = false;
+    state.views.filter(function (view) {
+        return view.presenter !== undefined;
+    }).forEach(function (view) {
+        if (view.presenter.draw()) {
+            redrawn = true;
+        }
+    });
+    return redrawn;
 };
 
 var createRoot = (function (root, definition, present) {
+    var state = {
+        valueMapping: null // "none" or "indexes"
+    };
 
-	var state = {
-		valueMapping: null // "none" or "indexes"
-	};
+    if (root && root.dataset.valueMapping) {
+        var allowed = ['none', 'indexes'];
+        var mapping = root.dataset.valueMapping;
+        state.valueMapping = allowed.indexOf(mapping) !== -1 ? mapping : null;
+    }
 
-	if (root && root.dataset.valueMapping) {
-		var allowed = ['none', 'indexes'];
-		var mapping = root.dataset.valueMapping;
-		state.valueMapping = allowed.indexOf(mapping) !== -1 ? mapping : null;
-	}
-
-	return Object.assign({}, rooter(state, root), resizer(state), updater(state), grouper(state, definition), drawer(state, draw, drawViews, present), destroyer(state));
+    return Object.assign({}, rooter(state, root), resizer(state), updater(state), grouper(state, definition), drawer(state, draw, drawViews, present), destroyer(state));
 });
 
 var draw$1 = function draw(state, present, ready) {
@@ -2877,221 +2873,219 @@ var keysToList = function keysToList(obj) {
  */
 
 var Tick = function () {
-	function Tick() {
-		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-		var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document.createElement('div');
-		classCallCheck(this, Tick);
+    function Tick() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document.createElement('div');
+        classCallCheck(this, Tick);
+
+        // set base configuration options
+        this._options = mergeObjects(Tick.options(), options);
+
+        // instance properties
+        this._element = element;
+        this._value = null;
+        this._observer = null;
+        this._viewDefinition = null;
+        this._constants = null;
+        this._presets = null;
+        this._updater = null;
+        this._credits = null;
+
+        // callback methods
+        this._didInit = null;
+        this._didDestroy = null;
+        this._willDestroy = null;
+        this._didUpdate = null;
+
+        // initialise Tick
+        this._init();
+    }
+
+    /**
+     * Default options for this control
+     */
 
 
-		// set base configuration options
-		this._options = mergeObjects(Tick.options(), options);
-
-		// instance properties
-		this._element = element;
-		this._value = null;
-		this._observer = null;
-		this._viewDefinition = null;
-		this._constants = null;
-		this._presets = null;
-		this._updater = null;
-		this._credits = null;
-
-		// callback methods
-		this._didInit = null;
-		this._didDestroy = null;
-		this._willDestroy = null;
-		this._didUpdate = null;
-
-		// initialise Tick
-		this._init();
-	}
-
-	/**
-  * Default options for this control
-  */
+    createClass(Tick, [{
+        key: 'isRootElement',
 
 
-	createClass(Tick, [{
-		key: 'isRootElement',
+        /**
+         * Public API
+         */
+        value: function isRootElement(element) {
+            return this._element === element;
+        }
+    }, {
+        key: 'setConstant',
+        value: function setConstant$$1(key, value) {
+            this._constants[key] = value;
+        }
+    }, {
+        key: 'getConstants',
+        value: function getConstants$$1() {
+            return this._constants;
+        }
+    }, {
+        key: 'getConstant',
+        value: function getConstant(key) {
+            return this._constants[key];
+        }
+    }, {
+        key: 'setPreset',
+        value: function setPreset$$1(key, fn) {
+            this._presets[key] = fn;
+        }
+    }, {
+        key: 'getPreset',
+        value: function getPreset(key) {
+            return this._presets[key];
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy$$1() {
+            this._willDestroy(this);
+
+            // clean up
+            this._observer.disconnect();
+
+            // destroy presenters
+            this.baseDefinition.presenter.destroy();
+
+            this._didDestroy(this);
+        }
+    }, {
+        key: 'redraw',
+        value: function redraw() {
+            if (!this.baseDefinition || !this.baseDefinition.presenter) return;
+            this.baseDefinition.presenter.reset();
+            this.baseDefinition.presenter.draw();
+            this._updater(this.baseDefinition, this._value);
+        }
+
+        /**
+         * Private Methods
+         */
+
+    }, {
+        key: '_init',
+        value: function _init() {
+            var _this = this;
+
+            // move options to properties
+            this._viewDefinition = this._options.view;
+            this._willDestroy = this._options.willDestroy;
+            this._didDestroy = this._options.didDestroy;
+            this._didInit = this._options.didInit;
+            this._didUpdate = this._options.didUpdate;
+            this._value = this._options.value;
+            this._presets = this._options.presets;
+            this._constants = this._options.constants;
+            this._credits = this._options.credits;
+
+            // no more use of options behind this line
+            // ---------------------------------------
+
+            // always add class tick to element (make sure it's only added once)
+            if (!this._element.classList.contains('tick')) {
+                this._element.classList.add('tick');
+            }
+
+            // use mutation observer to detect changes to value attribute
+            this._observer = observeAttributes(this._element, ['data-value'], function (value) {
+                _this.value = value;
+            });
+
+            // force default view root, move children of current root to this element
+            if (this._viewDefinition.root !== this._element) {
+                Array.from(this._viewDefinition.root.children).forEach(function (node) {
+                    _this._element.appendChild(node);
+                });
+                this._viewDefinition.root = this._element;
+            }
+
+            // no default view presenter defined, fallback to text
+            if (!this._viewDefinition.view && !this._viewDefinition.children) {
+                this._viewDefinition.view = 'text';
+            }
+
+            // setup root presenter
+            this._updater = presentTick(this);
+
+            // update for first time
+            if (this.value !== null) {
+                this._update(this.value);
+            }
+
+            // set to ready state
+            this._element.dataset.state = 'initialised';
+
+            // done with init
+            this._didInit(this, this.value);
+
+            // credits
+            if (this._credits) {
+                var credits = document.createElement('a');
+                credits.className = 'tick-credits';
+                credits.href = this._credits.url;
+                credits.tabindex = -1;
+                credits.target = '_blank';
+                credits.rel = 'noopener noreferrer';
+                credits.textContent = this._credits.label;
+                this._element.appendChild(credits);
+            }
+        }
+    }, {
+        key: '_update',
+        value: function _update(value) {
+            this._updater(this.baseDefinition, value);
+
+            this._didUpdate(this, value);
+        }
+    }, {
+        key: 'baseDefinition',
 
 
-		/**
-   * Public API
-   */
-		value: function isRootElement(element) {
-			return this._element === element;
-		}
-	}, {
-		key: 'setConstant',
-		value: function setConstant$$1(key, value) {
-			this._constants[key] = value;
-		}
-	}, {
-		key: 'getConstants',
-		value: function getConstants$$1() {
-			return this._constants;
-		}
-	}, {
-		key: 'getConstant',
-		value: function getConstant(key) {
-			return this._constants[key];
-		}
-	}, {
-		key: 'setPreset',
-		value: function setPreset$$1(key, fn) {
-			this._presets[key] = fn;
-		}
-	}, {
-		key: 'getPreset',
-		value: function getPreset(key) {
-			return this._presets[key];
-		}
-	}, {
-		key: 'destroy',
-		value: function destroy$$1() {
-			this._willDestroy(this);
-
-			// clean up
-			this._observer.disconnect();
-
-			// destroy presenters
-			this.baseDefinition.presenter.destroy();
-
-			this._didDestroy(this);
-		}
-	}, {
-		key: 'redraw',
-		value: function redraw() {
-			if (!this.baseDefinition || !this.baseDefinition.presenter) return;
-			this.baseDefinition.presenter.reset();
-			this.baseDefinition.presenter.draw();
-			this._updater(this.baseDefinition, this._value);
-		}
-
-		/**
-   * Private Methods
-   */
-
-	}, {
-		key: '_init',
-		value: function _init() {
-			var _this = this;
-
-			// move options to properties
-			this._viewDefinition = this._options.view;
-			this._willDestroy = this._options.willDestroy;
-			this._didDestroy = this._options.didDestroy;
-			this._didInit = this._options.didInit;
-			this._didUpdate = this._options.didUpdate;
-			this._value = this._options.value;
-			this._presets = this._options.presets;
-			this._constants = this._options.constants;
-			this._credits = this._options.credits;
-
-			// no more use of options behind this line
-			// ---------------------------------------
-
-			// always add class tick to element (make sure it's only added once)
-			if (!this._element.classList.contains('tick')) {
-				this._element.classList.add('tick');
-			}
-
-			// use mutation observer to detect changes to value attribute
-			this._observer = observeAttributes(this._element, ['data-value'], function (value) {
-				_this.value = value;
-			});
-
-			// force default view root, move children of current root to this element
-			if (this._viewDefinition.root !== this._element) {
-				Array.from(this._viewDefinition.root.children).forEach(function (node) {
-					_this._element.appendChild(node);
-				});
-				this._viewDefinition.root = this._element;
-			}
-
-			// no default view presenter defined, fallback to text
-			if (!this._viewDefinition.view && !this._viewDefinition.children) {
-				this._viewDefinition.view = 'text';
-			}
-
-			// setup root presenter
-			this._updater = presentTick(this);
-
-			// update for first time
-			if (this.value !== null) {
-				this._update(this.value);
-			}
-
-			// set to ready state
-			this._element.dataset.state = 'initialised';
-
-			// done with init
-			this._didInit(this, this.value);
-
-			// credits
-			if (this._credits) {
-				var credits = document.createElement('a');
-				credits.className = 'tick-credits';
-				credits.href = this._credits.url;
-				credits.tabindex = -1;
-				credits.target = '_blank';
-				credits.rel = 'noopener noreferrer';
-				credits.textContent = this._credits.label;
-				this._element.appendChild(credits);
-			}
-		}
-	}, {
-		key: '_update',
-		value: function _update(value) {
-
-			this._updater(this.baseDefinition, value);
-
-			this._didUpdate(this, value);
-		}
-	}, {
-		key: 'baseDefinition',
-
-
-		/**
-   * Public Properties
-   */
-		get: function get$$1() {
-			return this._viewDefinition;
-		}
-	}, {
-		key: 'root',
-		get: function get$$1() {
-			return this._element;
-		}
-	}, {
-		key: 'value',
-		get: function get$$1() {
-			return this._value;
-		},
-		set: function set$$1(value) {
-			this._value = typeof value === 'string' ? toValue(value) : value;
-			this._update(value);
-		}
-	}], [{
-		key: 'options',
-		value: function options() {
-			return {
-				constants: getConstants(),
-				presets: getPresets(),
-				value: null,
-				view: null,
-				didInit: function didInit(tick) {},
-				didUpdate: function didUpdate(tick, value) {},
-				willDestroy: function willDestroy(tick) {},
-				didDestroy: function didDestroy(tick) {},
-				credits: {
-					label: 'Powered by PQINA',
-					url: 'https://pqina.nl/?ref=credits'
-				}
-			};
-		}
-	}]);
-	return Tick;
+        /**
+         * Public Properties
+         */
+        get: function get$$1() {
+            return this._viewDefinition;
+        }
+    }, {
+        key: 'root',
+        get: function get$$1() {
+            return this._element;
+        }
+    }, {
+        key: 'value',
+        get: function get$$1() {
+            return this._value;
+        },
+        set: function set$$1(value) {
+            this._value = typeof value === 'string' ? toValue(value) : value;
+            this._update(value);
+        }
+    }], [{
+        key: 'options',
+        value: function options() {
+            return {
+                constants: getConstants(),
+                presets: getPresets(),
+                value: null,
+                view: null,
+                didInit: function didInit(tick) {},
+                didUpdate: function didUpdate(tick, value) {},
+                willDestroy: function willDestroy(tick) {},
+                didDestroy: function didDestroy(tick) {},
+                credits: {
+                    label: 'Powered by PQINA',
+                    url: 'https://pqina.nl/?ref=credits'
+                }
+            };
+        }
+    }]);
+    return Tick;
 }();
 
 var transformDurationUnit = function transformDurationUnit(value, single, plural, progress) {
@@ -3317,232 +3311,222 @@ var destroy = function destroy(element) {
 };
 
 var time = function time(fn) {
-	return function () {
-		setTimeout(fn, 0);
-	};
+    return function () {
+        setTimeout(fn, 0);
+    };
 };
 
 var now$2 = function now$$1() {
-	return Date.now();
+    return Date.now();
 };
 
 var setTimer = function setTimer(cb) {
-	var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
-	var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+    var settings = mergeObjects({ autostart: true }, options);
 
-	var settings = mergeObjects({ autostart: true }, options);
+    var tickExpectedTime = null;
+    var tickStartTime = null;
+    var sleepStartTime = null;
+    var totalSleepTime = 0;
+    var sleepIntervalOffset = null;
 
-	var tickExpectedTime = null;
-	var tickStartTime = null;
-	var sleepStartTime = null;
-	var totalSleepTime = 0;
-	var sleepIntervalOffset = null;
+    var paused = false;
 
-	var paused = false;
+    var timer = null;
 
-	var timer = null;
+    var isPaused = function isPaused() {
+        return paused;
+    };
 
-	var isPaused = function isPaused() {
-		return paused;
-	};
+    var isStarted = function isStarted() {
+        return tickStartTime !== null;
+    };
 
-	var isStarted = function isStarted() {
-		return tickStartTime !== null;
-	};
+    var isDocumentHidden = function isDocumentHidden() {
+        return document.hidden;
+    };
 
-	var isDocumentHidden = function isDocumentHidden() {
-		return document.hidden;
-	};
+    // timer tick
+    var tick = function tick() {
+        var currentTime = now$2();
 
-	// timer tick
-	var tick = function tick() {
+        var timeoutErrorOffset = tickExpectedTime - currentTime;
 
-		var currentTime = now$2();
+        var timeout = interval + timeoutErrorOffset;
 
-		var timeoutErrorOffset = tickExpectedTime - currentTime;
+        // calculate new expected time
+        tickExpectedTime = currentTime + timeout;
 
-		var timeout = interval + timeoutErrorOffset;
+        // calculate total runtime
+        var runtime = currentTime - tickStartTime - totalSleepTime + timeoutErrorOffset;
 
-		// calculate new expected time
-		tickExpectedTime = currentTime + timeout;
+        // let others know total runtime of counter
+        cb(runtime);
 
-		// calculate total runtime
-		var runtime = currentTime - tickStartTime - totalSleepTime + timeoutErrorOffset;
+        // new timeout
+        timer = setTimeout(tick, timeout);
+    };
 
-		// let others know total runtime of counter
-		cb(runtime);
+    var start = function start() {
+        // if paused, run resume instead (makes building a stopwatch easier)
+        if (isPaused()) {
+            resume();
+            return;
+        }
 
-		// new timeout
-		timer = setTimeout(tick, timeout);
-	};
+        // if already running we don't do anything, can't start twice need to stop first
+        if (isStarted()) {
+            return;
+        }
 
-	var start = function start() {
+        // the moment we set the timeout
+        tickStartTime = now$2();
 
-		// if paused, run resume instead (makes building a stopwatch easier)
-		if (isPaused()) {
-			resume();
-			return;
-		}
+        // call callback immidiately with zero value
+        setTimeout(function () {
+            cb(0);
+        }, 0);
 
-		// if already running we don't do anything, can't start twice need to stop first
-		if (isStarted()) {
-			return;
-		}
+        // the moment the timeout should end
+        tickExpectedTime = now$2() + interval;
 
-		// the moment we set the timeout
-		tickStartTime = now$2();
+        // listen for changes in visibility
+        startListeningForVisibilityChanges();
 
-		// call callback immidiately with zero value
-		setTimeout(function () {
-			cb(0);
-		}, 0);
+        // stop here if document is hidden at start time
+        if (isDocumentHidden()) {
+            didHideDocument();
+            return;
+        }
 
-		// the moment the timeout should end
-		tickExpectedTime = now$2() + interval;
+        // start ticking
+        timer = setTimeout(function () {
+            tick();
+        }, interval);
+    };
 
-		// listen for changes in visibility
-		startListeningForVisibilityChanges();
+    var stop = function stop() {
+        // can always stop
 
-		// stop here if document is hidden at start time
-		if (isDocumentHidden()) {
-			didHideDocument();
-			return;
-		}
+        clearTimeout(timer);
+        timer = null;
+        tickStartTime = null;
+        tickExpectedTime = null;
+        sleepStartTime = null;
+        totalSleepTime = 0;
+        sleepIntervalOffset = null;
+        paused = false;
 
-		// start ticking
-		timer = setTimeout(function () {
-			tick();
-		}, interval);
-	};
+        stopListeningForVisibilityChanges();
+    };
 
-	var stop = function stop() {
-		// can always stop
+    var reset = function reset() {
+        // can always reset
+        stop();
+        start();
+    };
 
-		clearTimeout(timer);
-		timer = null;
-		tickStartTime = null;
-		tickExpectedTime = null;
-		sleepStartTime = null;
-		totalSleepTime = 0;
-		sleepIntervalOffset = null;
-		paused = false;
+    /**
+     * Pause / Resume
+     */
+    var pause = function pause() {
+        // can't pause if not running or if is hidden
+        if (!isStarted() || isDocumentHidden()) {
+            return;
+        }
 
-		stopListeningForVisibilityChanges();
-	};
+        paused = true;
 
-	var reset = function reset() {
-		// can always reset
-		stop();
-		start();
-	};
+        stopListeningForVisibilityChanges();
 
-	/**
-  * Pause / Resume
-  */
-	var pause = function pause() {
+        sleep();
+    };
 
-		// can't pause if not running or if is hidden
-		if (!isStarted() || isDocumentHidden()) {
-			return;
-		}
+    var resume = function resume() {
+        // can't resume if not paused if not started or if hidden
+        if (!isPaused() || !isStarted() || isDocumentHidden()) {
+            return;
+        }
 
-		paused = true;
+        paused = false;
 
-		stopListeningForVisibilityChanges();
+        startListeningForVisibilityChanges();
 
-		sleep();
-	};
+        wake();
+    };
 
-	var resume = function resume() {
+    // start sleeping
+    var sleep = function sleep() {
+        clearTimeout(timer);
+        sleepStartTime = now$2();
+        sleepIntervalOffset = tickExpectedTime - sleepStartTime;
+    };
 
-		// can't resume if not paused if not started or if hidden
-		if (!isPaused() || !isStarted() || isDocumentHidden()) {
-			return;
-		}
+    // wake from hidden or pause stated
+    var wake = function wake() {
+        // need to remember the wait duration
+        totalSleepTime += now$2() - sleepStartTime;
+        sleepStartTime = null;
 
-		paused = false;
+        // as we are going to call tick immidiately we expect the time to be now
+        tickExpectedTime = now$2() + sleepIntervalOffset;
 
-		startListeningForVisibilityChanges();
+        // start ticking
+        timer = setTimeout(function () {
+            tick();
+        }, sleepIntervalOffset);
+    };
 
-		wake();
-	};
+    /**
+     * Document Visibility Change
+     */
+    var didHideDocument = function didHideDocument() {
+        // can only be called if the timer is currently running so no checks
+        sleep();
+    };
 
-	// start sleeping
-	var sleep = function sleep() {
-		clearTimeout(timer);
-		sleepStartTime = now$2();
-		sleepIntervalOffset = tickExpectedTime - sleepStartTime;
-	};
+    var didShowDocument = function didShowDocument() {
+        // can only be called if the timer was running before (but could have been stopped in the mean time)
+        if (!isStarted()) return;
 
-	// wake from hidden or pause stated
-	var wake = function wake() {
+        wake();
+    };
 
-		// need to remember the wait duration
-		totalSleepTime += now$2() - sleepStartTime;
-		sleepStartTime = null;
+    var stopListeningForVisibilityChanges = function stopListeningForVisibilityChanges() {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
 
-		// as we are going to call tick immidiately we expect the time to be now
-		tickExpectedTime = now$2() + sleepIntervalOffset;
+    var startListeningForVisibilityChanges = function startListeningForVisibilityChanges() {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    };
 
-		// start ticking
-		timer = setTimeout(function () {
-			tick();
-		}, sleepIntervalOffset);
-	};
+    var handleVisibilityChange = function handleVisibilityChange() {
+        if (isDocumentHidden()) {
+            didHideDocument();
+        } else {
+            didShowDocument();
+        }
+    };
 
-	/**
-  * Document Visibility Change
-  */
-	var didHideDocument = function didHideDocument() {
+    /**
+     * Go time! (or not)
+     */
+    if (settings.autostart) {
+        start();
+    }
 
-		// can only be called if the timer is currently running so no checks
-		sleep();
-	};
-
-	var didShowDocument = function didShowDocument() {
-
-		// can only be called if the timer was running before (but could have been stopped in the mean time)
-		if (!isStarted()) {
-			return;
-		}
-
-		wake();
-	};
-
-	var stopListeningForVisibilityChanges = function stopListeningForVisibilityChanges() {
-		document.removeEventListener('visibilitychange', handleVisibilityChange);
-	};
-
-	var startListeningForVisibilityChanges = function startListeningForVisibilityChanges() {
-		document.addEventListener('visibilitychange', handleVisibilityChange);
-	};
-
-	var handleVisibilityChange = function handleVisibilityChange() {
-		if (isDocumentHidden()) {
-			didHideDocument();
-		} else {
-			didShowDocument();
-		}
-	};
-
-	/**
-  * Go time! (or not)
-  */
-	if (settings.autostart) {
-		start();
-	}
-
-	/**
-  * API
-  */
-	return {
-		start: start,
-		stop: time(stop),
-		reset: time(reset),
-		pause: time(pause),
-		resume: resume
-	};
+    /**
+     * API
+     */
+    return {
+        start: start,
+        stop: time(stop),
+        reset: time(reset),
+        pause: time(pause),
+        resume: resume
+    };
 };
 
 var toInterval = function toInterval(string) {

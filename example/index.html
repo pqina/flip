@@ -1,69 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width">
-    <title>Flip Example Preset</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Flip Example Preset</title>
 
-    <link rel="stylesheet" href="./flip/flip.min.css">
+        <link rel="stylesheet" href="../dist/flip.min.css" />
+    </head>
+    <body>
+        <!-- START OF FLIP EXAMPLE PRESET -->
 
-</head>
-<body>
+        <style>
+            .tick {
+                padding-bottom: 1em;
+                font-size: 1rem;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans,
+                    Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            }
 
-<!-- START OF FLIP EXAMPLE PRESET -->
+            .tick-label {
+                font-size: 0.375em;
+                text-align: center;
+            }
 
-<style>
-    .tick {
-        padding-bottom: 1em;
-        font-size:1rem;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    }
-    
-    .tick-label {
-        font-size:.375em;
-        text-align:center;
-    }
+            .tick-group {
+                margin: 0 0.25em;
+                text-align: center;
+            }
+        </style>
 
-    .tick-group {
-        margin:0 .25em;
-        text-align:center;
-    }
-</style>
+        <div class="tick" data-did-init="handleTickInit">
+            <div
+                data-repeat="true"
+                data-layout="horizontal center fit"
+                data-transform="preset(d, h, m, s) -> delay"
+            >
+                <div class="tick-group">
+                    <div
+                        data-key="value"
+                        data-repeat="true"
+                        data-transform="pad(00) -> split -> delay"
+                    >
+                        <span data-view="flip"></span>
+                    </div>
 
-<div class="tick"
-     data-did-init="handleTickInit">
-
-    <div data-repeat="true"
-         data-layout="horizontal center fit"
-         data-transform="preset(d, h, m, s) -> delay">
-
-        <div class="tick-group">
-
-            <div data-key="value"
-                 data-repeat="true"
-                 data-transform="pad(00) -> split -> delay">
-
-                <span data-view="flip"></span>
-
+                    <span data-key="label" data-view="text" class="tick-label"></span>
+                </div>
             </div>
-
-            <span data-key="label"
-                  data-view="text"
-                  class="tick-label"></span>
-
         </div>
 
-    </div>
-
-</div>
-
-<script>
-	function handleTickInit(tick) {
-
-        // Uncomment to set labels to different language ( in this case Dutch )
-        /*
+        <script>
+            function handleTickInit(tick) {
+                // Uncomment to set labels to different language ( in this case Dutch )
+                /*
         var locale = {
             YEAR_PLURAL: 'Jaren',
             YEAR_SINGULAR: 'Jaar',
@@ -89,18 +78,16 @@
         }
         */
 
-        var nextYear = (new Date()).getFullYear() + 1;
-        
-		Tick.count.down(nextYear + '-01-01').onupdate = function(value) {
-			tick.value = value;
-        };
+                var nextYear = new Date().getFullYear() + 1;
 
-	}
-</script>
+                Tick.count.down(nextYear + '-01-01').onupdate = function (value) {
+                    tick.value = value;
+                };
+            }
+        </script>
 
-<!-- END OF FLIP EXAMPLE PRESET -->
+        <!-- END OF FLIP EXAMPLE PRESET -->
 
-<script src="./flip/flip.min.js"></script>
-
-</body>
+        <script src="../dist/flip.min.js"></script>
+    </body>
 </html>
