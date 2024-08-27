@@ -78,7 +78,7 @@ Information on how to customize Tick and use the Tick API can be found on the [p
 
 ## Accessibility
 
-For better compatibility with screenreaders, we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out load. We can then use an `aria-label` attribute to provide a formatted label instead.
+For better compatibility with screenreaders, we need to hide the flip view using `aria-hidden`, this prevents the contents from being read out loud. We can then use an `aria-label` attribute to provide a formatted label instead.
 
 ```html
 <div class="tick"
