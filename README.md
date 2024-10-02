@@ -25,7 +25,6 @@ Or you can use one of the javascript framework codesandboxes below:
 - [React](https://codesandbox.io/s/react-flip-demo-txoux)
 - [Vue](https://codesandbox.io/s/vue-flip-demo-xhtfk)
 
-
 ## Setup
 
 For the code snippets below we'll assume it's the `flip.min.css` and `flip.min.js` version and the folder we are uploading to is named `flip`.
@@ -70,6 +69,7 @@ console.log(Tick);
 // logs {supported: true, options: {…}, helper: {…}, data: {…}, DOM: {…}, …}
 ```
 
+Module usage example project on Stackblitz: https://stackblitz.com/edit/flip-counter-module
 
 ## Docs
 
