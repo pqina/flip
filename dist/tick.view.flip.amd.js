@@ -2,7 +2,7 @@
 
 /*
  * @pqina/flip v1.8.3 - A Beautifully Animated Flip Clock
- * Copyright (c) 2023 PQINA - https://pqina.nl/flip/
+ * Copyright (c) 2024 PQINA - https://pqina.nl/flip/
  */
 define(function() {
 	if (!module) {

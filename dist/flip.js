@@ -240,7 +240,7 @@ if (!Object.keys) {
 
 /*
  * @pqina/flip v1.8.3 - A Beautifully Animated Flip Clock
- * Copyright (c) 2023 PQINA - https://pqina.nl/flip/
+ * Copyright (c) 2024 PQINA - https://pqina.nl/flip/
  */
 (function(root, undefined) {
 	'use strict';
@@ -743,8 +743,8 @@ module.exports = index;
 /* eslint-disable */
 
 /*
- * @pqina/tick v1.8.2 - Counters Made Easy
- * Copyright (c) 2023 PQINA - https://github.com/pqina/tick/
+ * @pqina/tick v1.8.3 - Counters Made Easy
+ * Copyright (c) 2024 PQINA - https://github.com/pqina/tick/
  */
 (function(root, plugins, undefined) {
 	'use strict';
@@ -3774,7 +3774,7 @@ var Tick = function () {
                 credits.href = this._credits.url;
                 credits.tabindex = -1;
                 credits.target = '_blank';
-                credits.rel = 'noopener noreferrer';
+                credits.rel = 'noopener noreferrer nofollow';
                 credits.textContent = this._credits.label;
                 this._element.appendChild(credits);
             }
