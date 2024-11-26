@@ -1,5 +1,9 @@
 # Changelog
 
+**1.8.4** | 26-11-2024
+
+-   Update Tick
+
 **1.8.3** | 17-11-2023
 
 -   Remove stray console log statement
