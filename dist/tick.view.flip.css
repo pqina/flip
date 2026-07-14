@@ -1,6 +1,6 @@
 /*
  * @pqina/flip v1.8.4 - A Beautifully Animated Flip Clock
- * Copyright (c) 2024 PQINA - https://pqina.nl/flip/
+ * Copyright (c) 2025 PQINA - https://pqina.nl/flip/
  */
 /**
  * Layout
@@ -63,7 +63,8 @@
   opacity: 0;
   -webkit-transform-origin: 0 100%;
           transform-origin: 0 100%;
-  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.5), 0 0.125em 0.5em rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.5), 0 0.125em 0.5em rgba(0, 0, 0, 0.75);
+          box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.5), 0 0.125em 0.5em rgba(0, 0, 0, 0.75);
   z-index: 0;
 }
 
@@ -121,7 +122,8 @@
           transform-origin: center bottom;
   top: 0;
   z-index: 2;
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+          box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .tick-flip-panel-back {
@@ -129,7 +131,8 @@
           transform-origin: center top;
   top: 50%;
   z-index: 1;
-  box-shadow: inset 0 -1px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0 -1px rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 -1px rgba(0, 0, 0, 0.1);
 }
 .tick-flip-panel-back::after {
   z-index: 1;
@@ -169,30 +172,35 @@
 }
 
 .tick-flip-panel-front-shadow {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.8)), to(rgba(0, 0, 0, 0.3)));
   background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
 }
 
 .tick-flip-panel-back-shadow {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.7)), to(rgba(0, 0, 0, 0.5)));
   background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
 }
 
 .tick-flip-panel-back-highlight {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.15)), to(rgba(255, 255, 255, 0.3)));
   background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
 }
 
 .tick [data-style*="shadow:inner"],
 .tick [data-style*="shadow:inner"] .tick-flip-card-shadow {
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .tick [data-style*="shadow:none"] .tick-flip-panel-front,
 .tick [data-style*="shadow:none"] .tick-flip-panel-back,
 .tick [data-style*="shadow:none"] .tick-flip-shadow,
 .tick [data-style*="shadow:none"] .tick-flip-card-shadow {
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 .tick [data-style*="shadow:none"] .tick-flip-back::after,
 .tick [data-style*="shadow:none"] .tick-flip-panel-front-shadow,
@@ -232,5 +240,6 @@
 }
 
 .tick-flip-shadow {
-  box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.25), 0 0.02125em 0.06125em rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.25), 0 0.02125em 0.06125em rgba(0, 0, 0, 0.25);
+          box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.25), 0 0.02125em 0.06125em rgba(0, 0, 0, 0.25);
 }

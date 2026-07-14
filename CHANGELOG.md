@@ -1,5 +1,16 @@
 # Changelog
 
+**1.8.5** | 11-03-2025
+
+-   Fixed build system compatibility with Node.js v16+ and v23+
+-   Updated build dependencies to current versions:
+    -   Babel 6 → Babel 7
+    -   Gulp 3 → Gulp 4
+    -   Updated all related plugins
+-   Fixed Sass deprecation warnings
+-   Added proper Babel configuration
+-   Maintained all existing functionality and API
+
 **1.8.4** | 26-11-2024
 
 -   Update Tick
