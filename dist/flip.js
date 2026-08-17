@@ -208,7 +208,6 @@ if (!Object.keys) {
 				'propertyIsEnumerable',
 				'constructor'
 			],
-			dontEnumsLength = dontEnums.length;
 
 		return function(obj) {
 			if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
@@ -224,11 +223,9 @@ if (!Object.keys) {
 			}
 
 			if (hasDontEnumBug) {
-				for (i = 0; i < dontEnumsLength; i++) {
-					if (hasOwnProperty.call(obj, dontEnums[i])) {
-						result.push(dontEnums[i]);
-					}
-				}
+				dontEnums.forEach(dontEnums => {
+					if (hasOwnProperty.call(obj, dontEnums)) result.push(dontEnums);
+				});
 			}
 			return result;
 		};
